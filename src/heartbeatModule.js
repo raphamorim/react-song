@@ -1,3 +1,10 @@
+var sequencerModule = {};
+window.sequencer = sequencerModule;
+
+if (typeof module !== "undefined" && module !== null) {
+  module.exports = sequencerModule;
+}
+
 (function(){
 
     'use strict';
@@ -82,12 +89,12 @@
         context = new window.msAudioContext();
     }else{
         //alert('Your browser does not support AudioContext!\n\nPlease use one of these browsers:\n\n- Chromium (Linux | Windows)\n- Firefox (OSX | Windows)\n- Chrome (Linux | Android | OSX | Windows)\n- Canary (OSX | Windows)\n- Safari (iOS 6.0+ | OSX)\n\nIf you use Chrome or Chromium, heartbeat uses the WebMIDI api');
-        window.sequencer = {
+        sequencerModule = {
             browser: browser,
             os: os
         };
         alert('The WebAudio API hasn\'t been implemented in ' + browser + ', please use any other browser');
-        window.sequencer.ready = function(cb){
+        sequencerModule.ready = function(cb){
             cb();
         };
         return;
@@ -161,17 +168,17 @@
         }
 /*
         log: function(msg){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.log(msg);
             }
         },
         info: function(msg){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.info(msg);
             }
         },
         error: function(msg){
-            if(sequencer.debug >= 3){
+            if(sequencerModule.debug >= 3){
                 console.error(msg);
             }
         },
@@ -191,7 +198,7 @@
     /**
         @namespace sequencer
     */
-    window.sequencer = {
+    sequencerModule = {
         name: 'qambi',
         protectedScope: protectedScope,
         ui: {},
@@ -237,8 +244,8 @@
         midiOutputs: {},
 /*
         logger: {
-            clear: function(){console.log('create a logger first with sequencer.createLogger()');},
-            print: function(){console.log('create a logger first with sequencer.createLogger()');}
+            clear: function(){console.log('create a logger first with sequencerModule.createLogger()');},
+            print: function(){console.log('create a logger first with sequencerModule.createLogger()');}
         },
 */
         storage: {
@@ -370,12 +377,12 @@
     };
 
     // debug levels
-    Object.defineProperty(sequencer, 'ERROR', {value: 1});
-    Object.defineProperty(sequencer, 'WARN', {value: 2});
-    Object.defineProperty(sequencer, 'INFO', {value: 3});
-    Object.defineProperty(sequencer, 'LOG', {value: 4});
+    Object.defineProperty(sequencerModule, 'ERROR', {value: 1});
+    Object.defineProperty(sequencerModule, 'WARN', {value: 2});
+    Object.defineProperty(sequencerModule, 'INFO', {value: 3});
+    Object.defineProperty(sequencerModule, 'LOG', {value: 4});
 
-    //Object.defineProperty(window.sequencer, 'timedTasks', {value: {}});
+    //Object.defineProperty(sequencerModule, 'timedTasks', {value: {}});
     //Object.defineProperty(window.sequencer, 'scheduledTasks', {value: {}});
     //Object.defineProperty(window.sequencer, 'repetitiveTasks', {value: {}});
 
@@ -403,7 +410,7 @@
         isEmptyObject, // defined in util.js
         objectForEach, //defined in util.js
         storage, //defined in open_module.js
-        updateInstruments, //defined in sequencer.js
+        updateInstruments, //defined in sequencerModule.js
         findItemsInFolder, //defined in util.js
 
         busy = false,
@@ -413,7 +420,7 @@
         callbacks = [];
 
 
-    sequencer.removeMidiFile = function(path){
+    sequencerModule.removeMidiFile = function(path){
         var item,
             items = [], i, folder;
 
@@ -442,7 +449,7 @@
     };
 
 
-    sequencer.removeInstrument = function(path, unloadSamples){
+    sequencerModule.removeInstrument = function(path, unloadSamples){
         var item, items = [], i, folder, mapping, samplePath;
 
         if(path.className === 'InstrumentConfig'){
@@ -491,7 +498,7 @@
     };
 
 
-    sequencer.removeSamplePack = function(path){
+    sequencerModule.removeSamplePack = function(path){
         var item,
             items = [], i, samples, sample, s, folder;
 
@@ -555,7 +562,7 @@
     };
 
 
-    sequencer.removeAssetPack = function(path){
+    sequencerModule.removeAssetPack = function(path){
         var item,
             folder;
 
@@ -579,7 +586,7 @@
     };
 
 
-    sequencer.startTaskQueue = function(cb){
+    sequencerModule.startTaskQueue = function(cb){
         //console.log('startTaskQueue', taskQueue.length, busy);
         if(busy === true){
             return;
@@ -589,24 +596,24 @@
     };
 
 
-    sequencer.addTask = function(task, callback, callbackAfterAllTasksAreDone){
+    sequencerModule.addTask = function(task, callback, callbackAfterAllTasksAreDone){
         task.id = 'task' + taskIndex++;
         taskQueue.push(task);
         //console.log('task', task.type, taskQueue.length);
         if(callback !== undefined){
             if(callbackAfterAllTasksAreDone === true){
                 // call the callback only after all tasks are done
-                sequencer.addCallbackAfterTask(callback);
+                sequencerModule.addCallbackAfterTask(callback);
             }else{
                 // call the callback right after this task is done
-                sequencer.addCallbackAfterTask(callback, [task.id]);
+                sequencerModule.addCallbackAfterTask(callback, [task.id]);
             }
         }
         return task.id;
     };
 
 
-    sequencer.addCallbackAfterTask = function(callback, taskIds){
+    sequencerModule.addCallbackAfterTask = function(callback, taskIds){
         callbacks.push({
            method: callback,
            taskIds: taskIds
@@ -649,7 +656,7 @@
                 console.log('onTaskQueueDone');
                 onTaskQueueDone();
             }
-            //console.log('task queue done', sequencer.storage);
+            //console.log('task queue done', sequencerModule.storage);
             return;
         }
 
@@ -716,59 +723,59 @@
     }
 
 
-    sequencer.getInstrument = function(path, exact_match){
+    sequencerModule.getInstrument = function(path, exact_match){
         return findItem(path, storage.instruments, exact_match);
     };
 
-    sequencer.getMidiFile = function(path, exact_match){
+    sequencerModule.getMidiFile = function(path, exact_match){
         return findItem(path, storage.midi, exact_match);
     };
 
-    sequencer.getSamplePack = function(path, exact_match){
+    sequencerModule.getSamplePack = function(path, exact_match){
         return findItem(path, storage.samplepacks, exact_match);
     };
 
-    sequencer.getSample = function(path, exact_match){
+    sequencerModule.getSample = function(path, exact_match){
         return findItem(path, storage.audio, exact_match);
     };
 
-    sequencer.getAssetPack = function(path, exact_match){
+    sequencerModule.getAssetPack = function(path, exact_match){
         return findItem(path, storage.assetpacks, exact_match);
     };
 
-    sequencer.getSamplePacks = function(path, include_subfolders){
+    sequencerModule.getSamplePacks = function(path, include_subfolders){
         return findItemsInFolder(path, storage.samplepacks, include_subfolders);
     };
 
-    sequencer.getAssetPacks = function(path, include_subfolders){
+    sequencerModule.getAssetPacks = function(path, include_subfolders){
         return findItemsInFolder(path, storage.assetpacks, include_subfolders);
     };
 
-    sequencer.getSamples = function(path, include_subfolders){
+    sequencerModule.getSamples = function(path, include_subfolders){
         return findItemsInFolder(path, storage.audio, include_subfolders);
     };
 
-    sequencer.getInstruments = function(path, include_subfolders){
+    sequencerModule.getInstruments = function(path, include_subfolders){
         return findItemsInFolder(path, storage.instruments, include_subfolders);
     };
 
-    sequencer.getMidiFiles = function(path, include_subfolders){
+    sequencerModule.getMidiFiles = function(path, include_subfolders){
         return findItemsInFolder(path, storage.midi, include_subfolders);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        storage = sequencer.storage;
-        loadLoop = sequencer.protectedScope.loadLoop;
-        findItem = sequencer.protectedScope.findItem;
-        storeItem = sequencer.protectedScope.storeItem;
-        deleteItem = sequencer.protectedScope.deleteItem;
-        typeString = sequencer.protectedScope.typeString;
-        getArguments = sequencer.protectedScope.getArguments;
-        isEmptyObject = sequencer.protectedScope.isEmptyObject;
-        objectForEach = sequencer.protectedScope.objectForEach;
-        updateInstruments = sequencer.protectedScope.updateInstruments;
-        findItemsInFolder = sequencer.protectedScope.findItemsInFolder;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        storage = sequencerModule.storage;
+        loadLoop = sequencerModule.protectedScope.loadLoop;
+        findItem = sequencerModule.protectedScope.findItem;
+        storeItem = sequencerModule.protectedScope.storeItem;
+        deleteItem = sequencerModule.protectedScope.deleteItem;
+        typeString = sequencerModule.protectedScope.typeString;
+        getArguments = sequencerModule.protectedScope.getArguments;
+        isEmptyObject = sequencerModule.protectedScope.isEmptyObject;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
+        updateInstruments = sequencerModule.protectedScope.updateInstruments;
+        findItemsInFolder = sequencerModule.protectedScope.findItemsInFolder;
     });
 
 }());(function(){
@@ -820,17 +827,17 @@
 
 
     function store(assetpack){
-        var occupied = findItem(assetpack.localPath, sequencer.storage.assetpacks, true),
+        var occupied = findItem(assetpack.localPath, sequencerModule.storage.assetpacks, true),
             action = assetpack.action;
 
         //console.log('occ', occupied);
         if(occupied && occupied.className === 'AssetPack' && action !== 'overwrite'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('there is already an AssetPack at', assetpack.localPath);
             }
             return true;
         }else{
-            storeItem(assetpack, assetpack.localPath, sequencer.storage.assetpacks);
+            storeItem(assetpack, assetpack.localPath, sequencerModule.storage.assetpacks);
             return false;
         }
     }
@@ -898,13 +905,13 @@
 
 
         if(loaded === true){
-            assetpack = findItem(localPath, sequencer.storage.assetpacks, true);
+            assetpack = findItem(localPath, sequencerModule.storage.assetpacks, true);
             callback(assetpack);
             return;
         }
 
         if(assetpack.url !== undefined){
-            var packs = sequencer.storage.assetpacks,
+            var packs = sequencerModule.storage.assetpacks,
                 tmp, p, double = null;
 
             for(p in packs){
@@ -924,7 +931,7 @@
                 removeAssetPack(localPath);
 
                 assetpack = null;
-                assetpack = findItem(double.localPath, sequencer.storage.assetpacks, true);
+                assetpack = findItem(double.localPath, sequencerModule.storage.assetpacks, true);
                 //console.log(assetpack.id, double.id);
                 callback(assetpack);
                 return;
@@ -937,7 +944,7 @@
             //console.log('midifile', assets[i]);
             asset = assets[i];
             asset.pack = assetpack;
-            sequencer.addMidiFile(asset);
+            sequencerModule.addMidiFile(asset);
         }
 
         assets = assetpack.instruments;
@@ -945,7 +952,7 @@
             //console.log('instrument', assets[i]);
             asset = assets[i];
             asset.pack = assetpack;
-            sequencer.addInstrument(asset);
+            sequencerModule.addInstrument(asset);
         }
 
         assets = assetpack.samplepacks;
@@ -954,7 +961,7 @@
             asset = assets[i];
             asset.pack = assetpack;
             //console.log(asset.folder, pack.fileSize);
-            sequencer.addSamplePack(asset);
+            sequencerModule.addSamplePack(asset);
         }
 
         callback(assetpack);
@@ -986,12 +993,12 @@
     };
 
 
-    sequencer.addAssetPack = function(config, callback){
+    sequencerModule.addAssetPack = function(config, callback){
         var type = typeString(config),
             assetpack, json, name, folder;
 
         if(type !== 'object'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('can\'t create an AssetPack with this data', config);
             }
             return false;
@@ -1009,14 +1016,14 @@
                 try{
                     json = JSON.parse(json);
                 }catch(e){
-                    if(sequencer.debug >= 2){
+                    if(sequencerModule.debug >= 2){
                         console.warn('can\'t create an AssetPack with this data', config);
                     }
                     return false;
                 }
             }
             if(json.instruments === undefined && json.midifiles === undefined && json.samplepacks === undefined){
-                if(sequencer.debug >= 2){
+                if(sequencerModule.debug >= 2){
                     console.warn('can\'t create an AssetPack with this data', config);
                 }
                 return false;
@@ -1035,7 +1042,7 @@
         //assetpack = new AssetPack(config);
         //console.log(assetpack.id);
 
-        sequencer.addTask({
+        sequencerModule.addTask({
             type: 'load asset pack',
             method: load,
             params: new AssetPack(config)
@@ -1046,9 +1053,9 @@
             //console.log('assetpack', assetpack);
         }, true);
 
-        sequencer.startTaskQueue();
+        sequencerModule.startTaskQueue();
 /*
-        sequencer.addTask({
+        sequencerModule.addTask({
             method: load,
             params: assetpack
         }, function(){
@@ -1062,22 +1069,22 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
+    sequencerModule.protectedScope.addInitMethod(function(){
 
-        ajax = sequencer.protectedScope.ajax;
-        round = sequencer.protectedScope.round;
-        parseUrl = sequencer.protectedScope.parseUrl;
-        findItem = sequencer.protectedScope.findItem;
-        storeItem = sequencer.protectedScope.storeItem;
-        deleteItem = sequencer.protectedScope.deleteItem;
-        typeString = sequencer.protectedScope.typeString;
-        objectForEach = sequencer.protectedScope.objectForEach;
+        ajax = sequencerModule.protectedScope.ajax;
+        round = sequencerModule.protectedScope.round;
+        parseUrl = sequencerModule.protectedScope.parseUrl;
+        findItem = sequencerModule.protectedScope.findItem;
+        storeItem = sequencerModule.protectedScope.storeItem;
+        deleteItem = sequencerModule.protectedScope.deleteItem;
+        typeString = sequencerModule.protectedScope.typeString;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
 
-        storage = sequencer.storage;
-        removeMidiFile = sequencer.removeMidiFile;
-        removeInstrument = sequencer.removeInstrument;
-        removeSamplePack = sequencer.removeSamplePack;
-        removeAssetPack = sequencer.removeAssetPack;
+        storage = sequencerModule.storage;
+        removeMidiFile = sequencerModule.removeMidiFile;
+        removeInstrument = sequencerModule.removeInstrument;
+        removeSamplePack = sequencerModule.removeSamplePack;
+        removeAssetPack = sequencerModule.removeAssetPack;
     });
 
 
@@ -1107,7 +1114,7 @@
 
             var interleavedSamples = getInterleavedSamples(audioBuffer);
 
-            bitrate = bitrate || sequencer.bitrate_mp3_encoding; //kbps
+            bitrate = bitrate || sequencerModule.bitrate_mp3_encoding; //kbps
 
             if(mp3Encoder === undefined){
                 mp3Encoder = createWorker();
@@ -1144,14 +1151,14 @@
 
         }else if(type === 'ogg'){
 
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('support for ogg is not yet implemented');
             }
             callback(false);
 
         }else{
 
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('unsupported type', type);
             }
             callback(false);
@@ -1252,13 +1259,13 @@
         return new Worker(URL.createObjectURL(blob));
     }
 
-    sequencer.encodeAudio = encodeAudio;
-    sequencer.protectedScope.cleanupAudioEncoder = cleanUp;
+    sequencerModule.encodeAudio = encodeAudio;
+    sequencerModule.protectedScope.cleanupAudioEncoder = cleanUp;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        encode64 = sequencer.util.encode64;
-        base64EncArr = sequencer.util.base64EncArr;
-        context = sequencer.protectedScope.context;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        encode64 = sequencerModule.util.encode64;
+        base64EncArr = sequencerModule.util.base64EncArr;
+        context = sequencerModule.protectedScope.context;
     });
 
 }());
@@ -1334,20 +1341,20 @@
         }
 
 
-        // provide either buffer (AudioBuffer) or path to a sample in the sequencer.storage object
+        // provide either buffer (AudioBuffer) or path to a sample in the sequencerModule.storage object
         this.buffer = config.buffer;
         this.sampleId = config.sampleId;
         this.path = config.path;
 
         if(this.buffer === undefined && this.path === undefined){
-            if(sequencer.debug >= sequencer.WARN){
-                console.warn('please provide an AudioBuffer or a path to a sample in the sequencer.storage object');
+            if(sequencerModule.debug >= sequencerModule.WARN){
+                console.warn('please provide an AudioBuffer or a path to a sample in the sequencerModule.storage object');
             }
             return;
         }
 
         if(this.buffer !== undefined && typeString(this.buffer) !== 'audiobuffer'){
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('buffer has to be an AudioBuffer');
             }
             return;
@@ -1355,7 +1362,7 @@
 
         if(this.path !== undefined){
             if(typeString(this.path) !== 'string'){
-                if(sequencer.debug >= sequencer.WARN){
+                if(sequencerModule.debug >= sequencerModule.WARN){
                     console.warn('path has to be a String');
                 }
                 return;
@@ -1367,14 +1374,14 @@
                 this.sampleId = this.sampleId.split('/');
                 this.sampleId = this.sampleId[this.sampleId.length - 1];
 
-                this.buffer = sequencer.getSample(this.path);
+                this.buffer = sequencerModule.getSample(this.path);
                 if(this.buffer === false){
-                    if(sequencer.debug >= sequencer.WARN){
+                    if(sequencerModule.debug >= sequencerModule.WARN){
                         console.warn('no sample found at', this.path);
                     }
                     return;
                 }
-                this.buffer = sequencer.getSample(this.path);
+                this.buffer = sequencerModule.getSample(this.path);
                 //console.log(this.sampleId, this.path, this.buffer);
                 //console.log(this.buffer);
             }
@@ -1477,7 +1484,7 @@
                 this.update();
             }
         }else{
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('you have to provide a type "ticks" or "millis" and a value');
             }
         }
@@ -1500,7 +1507,7 @@
                 this.update();
             }
         }else{
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('you have to provide a type "ticks" or "millis" and a value');
             }
         }
@@ -1554,7 +1561,7 @@
     // same as MidiEvent, could be inherited from generic Event
     AudioEvent.prototype.move = function(ticks){
         if(isNaN(ticks)){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('please provide a number');
             }
             return;
@@ -1580,13 +1587,13 @@
         if(position[0] === 'ticks' && isNaN(position[1]) === false){
             this.ticks = parseInt(position[1], 10);
         }else if(this.song === undefined){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('The audio event has not been added to a song yet; you can only move to ticks values');
             }
         }else{
             position = this.song.getPosition(position);
             if(position === false){
-                if(sequencer.debug >= 1){
+                if(sequencerModule.debug >= 1){
                     console.error('wrong position data');
                 }
             }else{
@@ -1606,7 +1613,7 @@
     };
 
 
-    sequencer.createAudioEvent = function(config){
+    sequencerModule.createAudioEvent = function(config){
         if(config.className === 'AudioEvent'){
             return config.clone();
         }
@@ -1614,8 +1621,8 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 }());(function(){
@@ -1695,11 +1702,11 @@
             recording.planarSamples = planarSamples;
             recording.interleavedSamples = interleavedSamples;
         }else{
-            recording.planarSamples = sequencer.storage.audio.recordings[scope.recordId].planarSamples;
-            recording.interleavedSamples = sequencer.storage.audio.recordings[scope.recordId].interleavedSamples;
+            recording.planarSamples = sequencerModule.storage.audio.recordings[scope.recordId].planarSamples;
+            recording.interleavedSamples = sequencerModule.storage.audio.recordings[scope.recordId].interleavedSamples;
         }
 
-        sequencer.storage.audio.recordings[scope.recordId] = recording;
+        sequencerModule.storage.audio.recordings[scope.recordId] = recording;
         //console.log('create took', window.performance.now() - scope.timestamp);
 
         if(scope.callback !== null){
@@ -1730,7 +1737,7 @@
             if(type === 'new'){
                 recording.interleavedSamples = interleavedSamples;
             }else{
-                recording.interleavedSamples = sequencer.storage.audio.recordings[scope.recordId].interleavedSamples;
+                recording.interleavedSamples = sequencerModule.storage.audio.recordings[scope.recordId].interleavedSamples;
             }
 
             // create waveform images
@@ -1740,7 +1747,7 @@
                 //callback
                 function(data){
                     recording.waveform = {dataUrls: data};
-                    sequencer.storage.audio.recordings[scope.recordId] = recording;
+                    sequencerModule.storage.audio.recordings[scope.recordId] = recording;
                     //console.log('encode took', window.performance.now() - scope.timestamp);
                     if(scope.callback !== null){
                         scope.callback(recording);
@@ -1750,7 +1757,7 @@
             );
 
         }, function(){
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('no valid audiodata');
             }
         });
@@ -1773,7 +1780,7 @@
 
             // errorCallback
             function(error) {
-                if(sequencer.debug >= sequencer.WARN){
+                if(sequencerModule.debug >= sequencerModule.WARN){
                     console.log(error);
                 }
                 microphoneAccessGranted = false;
@@ -1891,7 +1898,7 @@
         this.callback = callback;
         this.worker.postMessage({
             command: 'update_wavfile',
-            samples: sequencer.storage.audio.recordings[recordId].interleavedSamples,
+            samples: sequencerModule.storage.audio.recordings[recordId].interleavedSamples,
             bufferIndexStart: bufferIndexStart,
             bufferIndexEnd: bufferIndexEnd
         });
@@ -1913,21 +1920,21 @@
     };
 
 
-    sequencer.protectedScope.createAudioRecorder = function(track){
-        if(sequencer.record_audio === false){
+    sequencerModule.protectedScope.createAudioRecorder = function(track){
+        if(sequencerModule.record_audio === false){
             return false;
         }
         return new AudioRecorder(track);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        encode64 = sequencer.util.encode64;
-        context = sequencer.protectedScope.context;
-        getWaveformData = sequencer.getWaveformData;
-        createWorker = sequencer.protectedScope.createAudioRecorderWorker;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        encode64 = sequencerModule.util.encode64;
+        context = sequencerModule.protectedScope.context;
+        getWaveformData = sequencerModule.getWaveformData;
+        createWorker = sequencerModule.protectedScope.createAudioRecorderWorker;
         millisPerSample = (1/context.sampleRate) * 1000;
-        dispatchEvent = sequencer.protectedScope.songDispatchEvent;
+        dispatchEvent = sequencerModule.protectedScope.songDispatchEvent;
         bufferMillis = bufferSize * millisPerSample;
     });
 
@@ -1993,7 +2000,7 @@
                     recording.waveform.images = images;
                     recording.waveform.dataUrls = urls;
 
-                    sequencer.storage.audio.recordings[scope.recordId] = recording;
+                    sequencerModule.storage.audio.recordings[scope.recordId] = recording;
                     console.log('took', window.performance.now() - scope.timestamp);
                     if(scope.callback !== null){
                         scope.callback(recording);
@@ -2291,7 +2298,7 @@
     }
 
 
-    sequencer.protectedScope.createAudioRecorderWorker = function(){
+    sequencerModule.protectedScope.createAudioRecorderWorker = function(){
         var blobURL = URL.createObjectURL(new Blob(['(', createWorker.toString(), ')()'], {type: 'application/javascript'}));
         return new Worker(blobURL);
     };
@@ -2337,7 +2344,7 @@
 
 
     AudioTrack.prototype.processEvent = function(audioEvent){
-        var sample = sequencer.createSample({buffer: audioEvent.buffer, track: audioEvent.track});
+        var sample = sequencerModule.createSample({buffer: audioEvent.buffer, track: audioEvent.track});
         audioEvent.sample = sample;
         //console.log(audioEvent.sampleOffset, audioEvent.playheadOffset, audioEvent.latencyCompensation);
         audioEvent.offset = audioEvent.sampleOffset + audioEvent.playheadOffset;// + audioEvent.latencyCompensation;
@@ -2398,21 +2405,21 @@
         });
     };
 
-    sequencer.protectedScope.createAudioTrack = function(track){
+    sequencerModule.protectedScope.createAudioTrack = function(track){
         return new AudioTrack(track);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
-        createAudioRecorder = sequencer.protectedScope.createAudioRecorder;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
+        createAudioRecorder = sequencerModule.protectedScope.createAudioRecorder;
     });
 
 }());
 // Sample.source -> gain (midiEvent.velocity) ->
 // Track.input -> [FX input ~~ FX output] -> Track.panner (Track.setPanning())-> Track.output (Track.setVolume())
 // Song.gain (Song.setVolume()) ->
-// Sequencer.gain (sequencer.setMasterVolume()) -> Sequencer.compressor -> context.destiny
+// SequencerModule.gain (sequencerModule.setMasterVolume()) -> SequencerModule.compressor -> context.destiny
 
 (function(){
 
@@ -2510,7 +2517,7 @@
     };
 
 
-    sequencer.createReverb = function(id){
+    sequencerModule.createReverb = function(id){
         var buffer = getSample(id);
         if(buffer === false){
             console.warn('no reverb with id', id, 'loaded');
@@ -2524,45 +2531,45 @@
     };
 
 
-    sequencer.createPanner = function(config){
+    sequencerModule.createPanner = function(config){
         config = config || {};
         config.type = 'panner';
         return new Panner(config);
     };
 
 
-    sequencer.createPanner2 = function(config){
+    sequencerModule.createPanner2 = function(config){
         config = config || {};
         config.type = 'panner2';
         return new Panner2(config);
     };
 
 
-    sequencer.createDelay = function(config){
+    sequencerModule.createDelay = function(config){
         config = config || {};
         config.type = 'delay';
         return new Delay(config);
     };
 
 
-    sequencer.createCompressor = function(config){
+    sequencerModule.createCompressor = function(config){
         config = config || {};
         config.type = 'compressor';
         return new Compressor(config);
     };
 
 
-    sequencer.createBiQuadFilter = function(config){
+    sequencerModule.createBiQuadFilter = function(config){
         config = config || {};
         config.type = 'biquadfilter';
         return new BiQuadFilter(config);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        context = sequencer.protectedScope.context;
-        createClass = sequencer.protectedScope.createClass;
-        getSample = sequencer.getSample;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        context = sequencerModule.protectedScope.context;
+        createClass = sequencerModule.protectedScope.createClass;
+        getSample = sequencerModule.getSample;
 
         Reverb = createClass(Effect, function(config){
             this.node = context.createConvolver();
@@ -2705,7 +2712,7 @@
 
     song.getStats(searchString);
     track.getStats(searchString);
-    sequencer.getStats(events, searchString);
+    sequencerModule.getStats(events, searchString);
 
 
 */
@@ -2716,11 +2723,11 @@
 
     var
         //import
-        createNote = sequencer.createNote, // → defined in note.js
-        findEvent = sequencer.findEvent, // → defined in find_event.js
-        round = sequencer.protectedScope.round, // → defined in util.js
-        getEvents = sequencer.protectedScope.getEvents, // → defined in find_event.js
-        typeString = sequencer.protectedScope.typeString, // → defined in util.js
+        createNote = sequencerModule.createNote, // → defined in note.js
+        findEvent = sequencerModule.findEvent, // → defined in find_event.js
+        round = sequencerModule.protectedScope.round, // → defined in util.js
+        getEvents = sequencerModule.protectedScope.getEvents, // → defined in find_event.js
+        typeString = sequencerModule.protectedScope.typeString, // → defined in util.js
 
         supportedOperators = 'max min avg all',
         supportedProperties = 'data1 data2 velocity noteNumber noteName frequency',
@@ -2861,14 +2868,14 @@
     };
 
 
-    sequencer.getStats = getStats;
+    sequencerModule.getStats = getStats;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createNote = sequencer.createNote;
-        findEvent = sequencer.findEvent;
-        round = sequencer.protectedScope.round;
-        getEvents = sequencer.protectedScope.getEvents;
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createNote = sequencerModule.createNote;
+        findEvent = sequencerModule.findEvent;
+        round = sequencerModule.protectedScope.round;
+        getEvents = sequencerModule.protectedScope.getEvents;
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 }());(function(){
@@ -3622,14 +3629,14 @@
     for(i = 0; i < numEvents; i++){
       event = results[i];
 
-      if(event.type === sequencer.NOTE_ON){
+      if(event.type === sequencerModule.NOTE_ON){
 
         if(noteOnEvents[event.noteNumber] === undefined){
           noteOnEvents[event.noteNumber] = [];
         }
         noteOnEvents[event.noteNumber].push(event);
 
-      }else if(event.type === sequencer.NOTE_OFF){
+      }else if(event.type === sequencerModule.NOTE_OFF){
 
         tmp = noteOnEvents[event.noteNumber];
         if(tmp){
@@ -3652,16 +3659,16 @@
     return resultsFiltered;
   };
 
-  sequencer.findEvent = findEvent;
-  sequencer.findNote = findNote;
-  //sequencer.removeMutualEvents = removeMutualEvents;
-  sequencer.protectedScope.getEvents = getEvents;
+  sequencerModule.findEvent = findEvent;
+  sequencerModule.findNote = findNote;
+  //sequencerModule.removeMutualEvents = removeMutualEvents;
+  sequencerModule.protectedScope.getEvents = getEvents;
 
-  sequencer.protectedScope.addInitMethod(function(){
-    createNote = sequencer.createNote;
-    typeString = sequencer.protectedScope.typeString;
-    createMidiNote = sequencer.createMidiNote;
-    midiEventNumberByName = sequencer.midiEventNumberByName;
+  sequencerModule.protectedScope.addInitMethod(function(){
+    createNote = sequencerModule.createNote;
+    typeString = sequencerModule.protectedScope.typeString;
+    createMidiNote = sequencerModule.createMidiNote;
+    midiEventNumberByName = sequencerModule.midiEventNumberByName;
   });
 
 }());(function(){
@@ -3672,7 +3679,7 @@
         // satisfy jslint
         sequencer = window.sequencer,
         console = window.console,
-        debug = sequencer.debug,
+        debug = sequencerModule.debug,
 
         //import
         context, // → defined in open_module.js
@@ -3726,8 +3733,8 @@
 
     // called by asset manager when a sample pack or an instrument has been unloaded, see asset_manager.js
     Instrument.prototype.reset = function(){
-        var instrument = sequencer.getInstrument(this.config.localPath),
-            samplepack = sequencer.getSamplePack(this.config.sample_path);
+        var instrument = sequencerModule.getInstrument(this.config.localPath),
+            samplepack = sequencerModule.getSamplePack(this.config.sample_path);
 
         if(samplepack === false || instrument === false){
             this.scheduledEvents = {};
@@ -3757,7 +3764,7 @@
             samplePack,
             audioFolder,
             config = this.config,
-            noteNameMode = config.notename_mode === undefined ? sequencer.noteNameMode : config.notename_mode,
+            noteNameMode = config.notename_mode === undefined ? sequencerModule.noteNameMode : config.notename_mode,
             mapping = config.mapping,
             me = this;
 
@@ -3787,7 +3794,7 @@
         samplePack = storage.samplepacks;
         for(i = 0, maxi = pathArray.length; i < maxi; i++){
             if(samplePack === undefined){
-                if(sequencer.debug){
+                if(sequencerModule.debug){
                     console.log('sample pack not found', pathArray.join('/'));
                 }
                 return;
@@ -3802,7 +3809,7 @@
                 audioFolder = audioFolder[pathArray[i]];
             }
         }catch(e){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('sample pack "' + pathArray[i] + '" is not loaded');
             }
             //sampleConfig = false;
@@ -3810,7 +3817,7 @@
         }
 
         if(audioFolder === undefined){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('sample pack not found', pathArray.join('/'));
             }
             //sampleConfig = false;
@@ -3862,9 +3869,9 @@
                     octave = id.substring(length - 1);
                     note = id.substring(0, length - 1);
                     noteName = id;
-                    noteNumber = sequencer.getNoteNumber(note, octave);
+                    noteNumber = sequencerModule.getNoteNumber(note, octave);
                 }else{
-                    noteName = sequencer.getNoteNameFromNoteNumber(id, noteNameMode);
+                    noteName = sequencerModule.getNoteNameFromNoteNumber(id, noteNameMode);
                     noteName = noteName.join('');
                     noteNumber = id;
                 }
@@ -3962,7 +3969,7 @@
             }
 
             if(buffer === undefined){
-                if(sequencer.debug){
+                if(sequencerModule.debug){
                     console.log('no buffer found for ' + id + ' (' + me.name + ')');
                 }
                 sampleConfig = false;
@@ -4049,8 +4056,8 @@
         if(this.license !== undefined){
             instrumentInfo += '<tr><td>license</td><td>' + this.license + '</td></tr>';
         }
-        instrumentInfo += '<tr><td>keyrange</td><td>' + this.lowestNote + '(' + sequencer.getFullNoteName(this.lowestNote) + ')';
-        instrumentInfo += ' - ' + this.highestNote + '(' + sequencer.getFullNoteName(this.highestNote) + ')</td></tr>';
+        instrumentInfo += '<tr><td>keyrange</td><td>' + this.lowestNote + '(' + sequencerModule.getFullNoteName(this.lowestNote) + ')';
+        instrumentInfo += ' - ' + this.highestNote + '(' + sequencerModule.getFullNoteName(this.highestNote) + ')</td></tr>';
 
         if(instrumentInfo !== ''){
             instrumentInfo = '<table><th colspan="2">instrument</th>' +  instrumentInfo + '</table>';
@@ -4312,7 +4319,7 @@
                     }else{
                         values = getEqualPowerCurve(100, 'fadeIn', volume2);
                     }
-                    now = sequencer.getTime();
+                    now = sequencerModule.getTime();
                     output.gain.setValueCurveAtTime(values, seconds, seconds + 0.05);
                 }else{
                     output.gain.setValueAtTime(data2/127, seconds);
@@ -4352,7 +4359,7 @@
             sourceId;
 
         if(!midiEvent.midiNote){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('playNote() no midi note');
             }
             return;
@@ -4381,7 +4388,7 @@
 
     Instrument.prototype.stopNote = function(midiEvent){
         if(midiEvent.midiNote === undefined){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('stopNote() no midi note', midiEvent.ticks, midiEvent.noteNumber);
             }
             return;
@@ -4393,7 +4400,7 @@
             sustainPedalSamples = this.sustainPedalSamples;
 
         // if(this.song && this.song.bar >= 6 && this.track.name === 'Sonata # 3'){
-        //     console.log('stopNote', midiEvent, seconds, sequencer.getTime());
+        //     console.log('stopNote', midiEvent, seconds, sequencerModule.getTime());
         // }
 
         //console.log(midiEvent.sustainPedalDown);
@@ -4405,7 +4412,7 @@
         }
 
         if(sample === undefined){
-            // if(sequencer.debug){
+            // if(sequencerModule.debug){
             //     console.log('no sample scheduled (anymore) for this midiEvent', sourceId, seconds);
             // }
             return;
@@ -4426,7 +4433,7 @@
     Instrument.prototype.reschedule = function(song){
         var
             min = song.millis,
-            max = min + (sequencer.bufferTime * 1000),
+            max = min + (sequencerModule.bufferTime * 1000),
             max2 = min + 20,
             scheduledSamples = this.scheduledSamples,
             id, note, sample;
@@ -4456,10 +4463,10 @@
 /*
         objectForEach(this.scheduledEvents, function(event, eventId){
             if(event === undefined || event.state === 'removed'){
-                delete sequencer.timedTasks['event_' + eventId];
+                delete sequencerModule.timedTasks['event_' + eventId];
                 delete this.scheduledEvents[eventId];
             }else if((event.millis >= min && event.millis < max2) === false){
-                delete sequencer.timedTasks['event_' + eventId];
+                delete sequencerModule.timedTasks['event_' + eventId];
                 delete this.scheduledEvents[eventId];
             }
         });
@@ -4613,7 +4620,7 @@
     }
 
 
-    sequencer.createInstrument = function(arg){
+    sequencerModule.createInstrument = function(arg){
         var type = typeString(arg),
             config,
             instrument;
@@ -4658,13 +4665,13 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        var protectedScope = sequencer.protectedScope;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        var protectedScope = sequencerModule.protectedScope;
 
-        storage = sequencer.storage;
-        createSample = sequencer.createSample;
-        createReverb = sequencer.createReverb;
-        dispatchEvent = sequencer.protectedScope.songDispatchEvent;
+        storage = sequencerModule.storage;
+        createSample = sequencerModule.createSample;
+        createReverb = sequencerModule.createReverb;
+        dispatchEvent = sequencerModule.protectedScope.songDispatchEvent;
 
         context = protectedScope.context;
         timedTasks = protectedScope.timedTasks;
@@ -4678,9 +4685,9 @@
         transpose = protectedScope.transpose;
         SimpleSynth = protectedScope.createClass(Instrument);
 
-        remap = sequencer.util.remap;
-        round = sequencer.util.round;
-        getEqualPowerCurve = sequencer.util.getEqualPowerCurve;
+        remap = sequencerModule.util.remap;
+        round = sequencerModule.util.round;
+        getEqualPowerCurve = sequencerModule.util.getEqualPowerCurve;
 
         SimpleSynth.prototype.parse = function(){
             var me = this,
@@ -4721,7 +4728,7 @@
             return createSample(data);
         };
 
-        sequencer.createSimpleSynth = function(config){
+        sequencerModule.createSimpleSynth = function(config){
             config = config || {};
             //console.log('creating sinewave');
             return new SimpleSynth(config);
@@ -4736,7 +4743,7 @@
         // satisfy jslint
         sequencer = window.sequencer,
         console = window.console,
-        debug = sequencer.debug,
+        debug = sequencerModule.debug,
 
         instrumentId = 0,
 
@@ -4788,7 +4795,7 @@
             update,
             sampleConfig,
             config = this.config,
-            noteNameMode = config.notename_mode === undefined ? sequencer.noteNameMode : config.notename_mode,
+            noteNameMode = config.notename_mode === undefined ? sequencerModule.noteNameMode : config.notename_mode,
             me = this;
 
         this.name = config.name || this.id;
@@ -4841,9 +4848,9 @@
                     octave = id.substring(length - 1);
                     note = id.substring(0, length - 1);
                     noteName = id;
-                    noteNumber = sequencer.getNoteNumber(note, octave);
+                    noteNumber = sequencerModule.getNoteNumber(note, octave);
                 }else{
-                    noteName = sequencer.getNoteNameFromNoteNumber(id, noteNameMode);
+                    noteName = sequencerModule.getNoteNameFromNoteNumber(id, noteNameMode);
                     noteName = noteName.join('');
                     noteNumber = id;
                 }
@@ -4928,7 +4935,7 @@
 
 
             if(buffer === undefined){
-                if(sequencer.debug){
+                if(sequencerModule.debug){
                     console.log('no buffer found for ' + id + ' (' + me.name + ')');
                 }
                 sampleConfig = false;
@@ -5009,8 +5016,8 @@
         if(instrumentInfo.license !== undefined){
             instrumentHtml += '<tr><td>license</td><td>' + instrumentInfo.license + '</td></tr>';
         }
-        instrumentHtml += '<tr><td>keyrange</td><td>' + this.lowestNote + '(' + sequencer.getFullNoteName(this.lowestNote) + ')';
-        instrumentHtml += ' - ' + this.highestNote + '(' + sequencer.getFullNoteName(this.highestNote) + ')</td></tr>';
+        instrumentHtml += '<tr><td>keyrange</td><td>' + this.lowestNote + '(' + sequencerModule.getFullNoteName(this.lowestNote) + ')';
+        instrumentHtml += ' - ' + this.highestNote + '(' + sequencerModule.getFullNoteName(this.highestNote) + ')</td></tr>';
 
         if(instrumentHtml !== ''){
             instrumentHtml = '<table><th colspan="2">instrument</th>' +  instrumentHtml + '</table>';
@@ -5072,7 +5079,7 @@
     };
 
 
-    sequencer.createInstrument2 = function(config){
+    sequencerModule.createInstrument2 = function(config){
 
         function executor(resolve, reject){
             var instrument;
@@ -5106,14 +5113,14 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        var protectedScope = sequencer.protectedScope;
-        createSample = sequencer.createSample;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        var protectedScope = sequencerModule.protectedScope;
+        createSample = sequencerModule.createSample;
         repetitiveTasks = protectedScope.repetitiveTasks;
         typeString = protectedScope.typeString;
-        round = sequencer.util.round;
-        createSimpleSynth = sequencer.createSimpleSynth;
-        parseSamples = sequencer.util.parseSamples;
+        round = sequencerModule.util.round;
+        createSimpleSynth = sequencerModule.createSimpleSynth;
+        parseSamples = sequencerModule.util.parseSamples;
 
         // instrument methods
         var methodNames = [
@@ -5182,17 +5189,17 @@
 
 
     function store(instrument){
-        var occupied = findItem(instrument.localPath, sequencer.storage.instruments, true),
+        var occupied = findItem(instrument.localPath, sequencerModule.storage.instruments, true),
             action = instrument.action;
 
         //console.log(instrument.localPath, occupied);
         if(occupied && occupied.className === 'InstrumentConfig' && action !== 'overwrite'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('there is already an Instrument at', instrument.localPath);
                 cleanup(instrument);
             }
         }else{
-            storeItem(instrument, instrument.localPath, sequencer.storage.instruments);
+            storeItem(instrument, instrument.localPath, sequencerModule.storage.instruments);
         }
     }
 
@@ -5244,13 +5251,13 @@
     }
 
 
-    sequencer.addInstrument = function(config, callback, callbackAfterAllTasksAreDone){
+    sequencerModule.addInstrument = function(config, callback, callbackAfterAllTasksAreDone){
         var type = typeString(config),
             instrument, json, name, folder;
 
 
         if(type !== 'object'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('can\'t add an Instrument with this data', config);
             }
             return false;
@@ -5266,14 +5273,14 @@
                 try{
                     json = JSON.parse(json);
                 }catch(e){
-                    if(sequencer.debug >= 2){
+                    if(sequencerModule.debug >= 2){
                         console.warn('can\'t add an Instrument with this data', config);
                     }
                     return false;
                 }
             }
             if(json.mapping === undefined){
-                if(sequencer.debug >= 2){
+                if(sequencerModule.debug >= 2){
                     console.warn('can\'t add an Instrument with this data', config);
                 }
                 return false;
@@ -5289,7 +5296,7 @@
 
         instrument = new InstrumentConfig(config);
 
-        sequencer.addTask({
+        sequencerModule.addTask({
             type: 'load instrument config',
             method: load,
             params: instrument
@@ -5302,7 +5309,7 @@
             }
         }, callbackAfterAllTasksAreDone);
 
-        sequencer.startTaskQueue();
+        sequencerModule.startTaskQueue();
 
         /*
         load(instrument, function(){
@@ -5316,13 +5323,13 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        ajax = sequencer.protectedScope.ajax;
-        findItem = sequencer.protectedScope.findItem;
-        parseUrl = sequencer.protectedScope.parseUrl;
-        storeItem = sequencer.protectedScope.storeItem;
-        typeString = sequencer.protectedScope.typeString;
-        objectForEach = sequencer.protectedScope.objectForEach;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        ajax = sequencerModule.protectedScope.ajax;
+        findItem = sequencerModule.protectedScope.findItem;
+        parseUrl = sequencerModule.protectedScope.parseUrl;
+        storeItem = sequencerModule.protectedScope.storeItem;
+        typeString = sequencerModule.protectedScope.typeString;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
     });
 
 }());
@@ -5522,7 +5529,7 @@
                     }else{
                         values = getEqualPowerCurve(100, 'fadeIn', volume2);
                     }
-                    now = sequencer.getTime();
+                    now = sequencerModule.getTime();
                     output.gain.setValueCurveAtTime(values, seconds, seconds + 0.05);
                 }else{
                     output.gain.setValueAtTime(data2/127, seconds);
@@ -5564,7 +5571,7 @@
             sourceId;
 
         if(!midiEvent.midiNote){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('playNote() no midi note');
             }
             return;
@@ -5594,7 +5601,7 @@
 
     stopNote = function(midiEvent){
         if(midiEvent.midiNote === undefined){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('stopNote() no midi note');
             }
             return;
@@ -5606,7 +5613,7 @@
             sustainPedalSamples = this.sustainPedalSamples;
 
         // if(this.song && this.song.bar >= 6 && this.track.name === 'Sonata # 3'){
-        //     console.log('stopNote', midiEvent, seconds, sequencer.getTime());
+        //     console.log('stopNote', midiEvent, seconds, sequencerModule.getTime());
         // }
 
         //console.log(midiEvent.sustainPedalDown);
@@ -5618,7 +5625,7 @@
         }
 
         if(sample === undefined){
-            // if(sequencer.debug){
+            // if(sequencerModule.debug){
             //     console.log('no sample scheduled (anymore) for this midiEvent', sourceId, seconds);
             // }
             return;
@@ -5647,7 +5654,7 @@
     reschedule = function(song){
         var
             min = song.millis,
-            max = min + (sequencer.bufferTime * 1000),
+            max = min + (sequencerModule.bufferTime * 1000),
             //max2 = min + 20,
             scheduledSamples = this.scheduledSamples,
             id, note, sample;
@@ -5677,10 +5684,10 @@
 /*
         objectForEach(this.scheduledEvents, function(event, eventId){
             if(event === undefined || event.state === 'removed'){
-                delete sequencer.timedTasks['event_' + eventId];
+                delete sequencerModule.timedTasks['event_' + eventId];
                 delete this.scheduledEvents[eventId];
             }else if((event.millis >= min && event.millis < max2) === false){
-                delete sequencer.timedTasks['event_' + eventId];
+                delete sequencerModule.timedTasks['event_' + eventId];
                 delete this.scheduledEvents[eventId];
             }
         });
@@ -5839,33 +5846,33 @@
         };
     }
 
-    sequencer.protectedScope.createAutoPanner = createAutoPanner;
-    sequencer.protectedScope.setKeyScalingPanning = setKeyScalingPanning;
-    sequencer.protectedScope.setKeyScalingRelease = setKeyScalingRelease;
-    sequencer.protectedScope.setRelease = setRelease;
-    sequencer.protectedScope.transposeSamples = transposeSamples;
-    sequencer.protectedScope.processEvent = processEvent;
-    sequencer.protectedScope.stopSustain = stopSustain;
-    sequencer.protectedScope.playNote = playNote;
-    sequencer.protectedScope.stopNote = stopNote;
-    sequencer.protectedScope.allNotesOff = allNotesOff;
-    sequencer.protectedScope.allNotesOffPart = allNotesOffPart;
-    sequencer.protectedScope.update = update;
-    sequencer.protectedScope.hasScheduledSamples = hasScheduledSamples;
-    sequencer.protectedScope.reschedule = reschedule;
-    sequencer.protectedScope.unschedule = unschedule;
+    sequencerModule.protectedScope.createAutoPanner = createAutoPanner;
+    sequencerModule.protectedScope.setKeyScalingPanning = setKeyScalingPanning;
+    sequencerModule.protectedScope.setKeyScalingRelease = setKeyScalingRelease;
+    sequencerModule.protectedScope.setRelease = setRelease;
+    sequencerModule.protectedScope.transposeSamples = transposeSamples;
+    sequencerModule.protectedScope.processEvent = processEvent;
+    sequencerModule.protectedScope.stopSustain = stopSustain;
+    sequencerModule.protectedScope.playNote = playNote;
+    sequencerModule.protectedScope.stopNote = stopNote;
+    sequencerModule.protectedScope.allNotesOff = allNotesOff;
+    sequencerModule.protectedScope.allNotesOffPart = allNotesOffPart;
+    sequencerModule.protectedScope.update = update;
+    sequencerModule.protectedScope.hasScheduledSamples = hasScheduledSamples;
+    sequencerModule.protectedScope.reschedule = reschedule;
+    sequencerModule.protectedScope.unschedule = unschedule;
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
-        timedTasks = sequencer.protectedScope.timedTasks;
-        createReverb = sequencer.createReverb;
-        objectForEach = sequencer.protectedScope.objectForEach;
-        isEmptyObject = sequencer.protectedScope.isEmptyObject;
-        transpose = sequencer.protectedScope.transpose;
-        getEqualPowerCurve = sequencer.util.getEqualPowerCurve;
-        remap = sequencer.util.remap;
-        dispatchEvent = sequencer.protectedScope.songDispatchEvent;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
+        timedTasks = sequencerModule.protectedScope.timedTasks;
+        createReverb = sequencerModule.createReverb;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
+        isEmptyObject = sequencerModule.protectedScope.isEmptyObject;
+        transpose = sequencerModule.protectedScope.transpose;
+        getEqualPowerCurve = sequencerModule.util.getEqualPowerCurve;
+        remap = sequencerModule.util.remap;
+        dispatchEvent = sequencerModule.protectedScope.songDispatchEvent;
     });
 
 }());(function(){
@@ -6523,12 +6530,12 @@
 
     KeyEditor.prototype.startMoveNote = function(note, x, y){
         if(note.className !== 'MidiNote'){
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn(note, 'is not a MidiNote');
             }
             return;
         }
-        //sequencer.unscheduleEvent(note);
+        //sequencerModule.unscheduleEvent(note);
         this.selectedNote = note;
         this.gripX = x - this.selectedNote.bbox.x;
     };
@@ -6572,7 +6579,7 @@
 
     KeyEditor.prototype.startMovePart = function(part, x, y){
         if(part.className !== 'Part'){
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn(part, 'is not a Part');
             }
             return;
@@ -6684,8 +6691,8 @@
     };
 
     KeyEditor.prototype.getPlayheadPosition = function(compensateForScroll){
-        //return (sequencer.percentage * this.width);// - this.scrollX;
-        //return ((sequencer.millis/song.durationMillis) * this.width);// - this.scrollX;
+        //return (sequencerModule.percentage * this.width);// - this.scrollX;
+        //return ((sequencerModule.millis/song.durationMillis) * this.width);// - this.scrollX;
         //var x = ((this.song.millis/this.song.durationMillis) * this.width);
         // change to ticks to make tempo changes visible by a faster moving playhead
         var x = ((this.song.ticks/this.song.durationTicks) * this.width);
@@ -7033,7 +7040,7 @@
         }
 
         if(this.song.playing){
-//            this.currentPage = floor(sequencer.ticks / this.viewportTicks) + 1;
+//            this.currentPage = floor(sequencerModule.ticks / this.viewportTicks) + 1;
             this.currentPage = floor(this.song.ticks / (this.barsPerPage * this.song.ticksPerBar)) + 1;
         }
 
@@ -7233,23 +7240,23 @@
     };
 
 
-    sequencer.createKeyEditor = function(song, config){
+    sequencerModule.createKeyEditor = function(song, config){
         return  new KeyEditor(song, config);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        getPosition = sequencer.protectedScope.getPosition;
-        createPlayhead = sequencer.protectedScope.createPlayhead;
-        createNote = sequencer.createNote;
-        debug = sequencer.debug;
-        floor = sequencer.protectedScope.floor;
-        round = sequencer.protectedScope.round;
-        typeString = sequencer.protectedScope.typeString;
-        objectToArray = sequencer.protectedScope.objectToArray;
-        arrayToObject = sequencer.protectedScope.arrayToObject;
-        getScaffoldingBars = sequencer.protectedScope.getScaffoldingBars;
-        createIteratorFactory = sequencer.protectedScope.createKeyEditorIteratorFactory;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        getPosition = sequencerModule.protectedScope.getPosition;
+        createPlayhead = sequencerModule.protectedScope.createPlayhead;
+        createNote = sequencerModule.createNote;
+        debug = sequencerModule.debug;
+        floor = sequencerModule.protectedScope.floor;
+        round = sequencerModule.protectedScope.round;
+        typeString = sequencerModule.protectedScope.typeString;
+        objectToArray = sequencerModule.protectedScope.objectToArray;
+        arrayToObject = sequencerModule.protectedScope.arrayToObject;
+        getScaffoldingBars = sequencerModule.protectedScope.getScaffoldingBars;
+        createIteratorFactory = sequencerModule.protectedScope.createKeyEditorIteratorFactory;
     });
 
 }());
@@ -7595,7 +7602,7 @@
             startTicks = editor.startTicks;
             endTicks = editor.endTicks;
             hasNextCalled = false;
-            if(editor.paginate === true && sequencer.isPlaying() === true){
+            if(editor.paginate === true && sequencerModule.isPlaying() === true){
                 return;
             }
             /*
@@ -7609,7 +7616,7 @@
             */
             index = position.get().eventIndex - 2;
             //console.log(events);
-            //console.log('ke',sequencer.isPlaying(),index,sequencer.eventIndex);
+            //console.log('ke',sequencerModule.isPlaying(),index,sequencerModule.eventIndex);
         };
 
         setTypes = function(){
@@ -7704,7 +7711,7 @@
             numNotes = song.numNotes;
             //console.log(startTicks, endTicks);
             hasNextCalled = false;
-            if(editor.paginate === true && sequencer.isPlaying() === true){
+            if(editor.paginate === true && sequencerModule.isPlaying() === true){
                 return;
             }
 
@@ -7760,14 +7767,14 @@
     };
 
 
-    sequencer.protectedScope.createKeyEditorIteratorFactory = function(song, editor){
+    sequencerModule.protectedScope.createKeyEditorIteratorFactory = function(song, editor){
         return new Factory(song, editor);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createNote = sequencer.createNote;
-        createPlayhead = sequencer.protectedScope.createPlayhead;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createNote = sequencerModule.createNote;
+        createPlayhead = sequencerModule.protectedScope.createPlayhead;
     });
 
 }());(function(){
@@ -7805,13 +7812,13 @@
     function checkNumber(value){
         //console.log(value);
         if(isNaN(value)){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('please provide a number');
             }
             return false;
         }
         if(value < 0 || value > 127){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('please provide a number between 0 and 127');
             }
             return false;
@@ -7822,8 +7829,8 @@
 
     Metronome = function(song){
         this.song = song;
-        this.track = sequencer.createTrack(this.song.id + '_metronome', 'metronome');
-        this.part = sequencer.createPart();
+        this.track = sequencerModule.createTrack(this.song.id + '_metronome', 'metronome');
+        this.part = sequencerModule.createPart();
         this.track.addPart(this.part);
         this.track.connect(this.song.gainNode);
         this.events = [];
@@ -7868,8 +7875,8 @@
                 noteLength = j === 0 ? metronome.noteLengthAccented : metronome.noteLengthNonAccented;
                 velocity = j === 0 ? metronome.velocityAccented : metronome.velocityNonAccented;
 
-                noteOn = sequencer.createMidiEvent(ticks, 144, noteNumber, velocity);
-                noteOff = sequencer.createMidiEvent(ticks + noteLength, 128, noteNumber, 0);
+                noteOn = sequencerModule.createMidiEvent(ticks, 144, noteNumber, velocity);
+                noteOff = sequencerModule.createMidiEvent(ticks + noteLength, 128, noteNumber, 0);
 
                 if(id === 'precount'){
                     noteOn.part = {id: 'precount'};
@@ -7946,7 +7953,7 @@
 
     Metronome.prototype.setInstrument = function(instrument){
         if(instrument.className !== 'Instrument'){
-            instrument = sequencer.createInstrument(instrument);
+            instrument = sequencerModule.createInstrument(instrument);
         }
         if(instrument !== false){
             this.track.setInstrument(instrument);
@@ -7959,7 +7966,7 @@
 
     Metronome.prototype.setNoteLengthAccentedTick = function(value){
         if(isNaN(value)){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('please provide a number');
             }
         }
@@ -7970,7 +7977,7 @@
 
     Metronome.prototype.setNoteLengthNonAccentedTick = function(value){
         if(isNaN(value)){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('please provide a number');
             }
         }
@@ -7983,7 +7990,7 @@
         value = checkNumber(value);
         if(value !== false){
             this.velocityAccented = value;
-        }else if(sequencer.debug >= 2){
+        }else if(sequencerModule.debug >= 2){
             console.warn('please provide a number');
         }
         this.updateConfig();
@@ -7994,7 +8001,7 @@
         value = checkNumber(value);
         if(value !== false){
             this.velocityNonAccented = value;
-        }else if(sequencer.debug >= 2){
+        }else if(sequencerModule.debug >= 2){
             console.warn('please provide a number');
         }
         this.updateConfig();
@@ -8005,7 +8012,7 @@
         value = checkNumber(value);
         if(value !== false){
             this.noteNumberAccented = value;
-        }else if(sequencer.debug >= 2){
+        }else if(sequencerModule.debug >= 2){
             console.warn('please provide a number');
         }
         this.updateConfig();
@@ -8016,7 +8023,7 @@
         value = checkNumber(value);
         if(value !== false){
             this.noteNumberNonAccented = value;
-        }else if(sequencer.debug >= 2){
+        }else if(sequencerModule.debug >= 2){
             console.warn('please provide a number');
         }
         this.updateConfig();
@@ -8090,18 +8097,18 @@
     };
 
 
-    sequencer.protectedScope.createMetronome = function(song){
+    sequencerModule.protectedScope.createMetronome = function(song){
         return new Metronome(song);
     };
 
-    sequencer.protectedScope.addInitMethod(function initMetronome(){
-        context = sequencer.protectedScope.context;
-        findItem = sequencer.protectedScope.findItem;
-        getPosition = sequencer.protectedScope.getPosition;
-        createMidiNote = sequencer.createMidiNote;
-        objectForEach = sequencer.util.objectForEach;
-        parseEvents = sequencer.protectedScope.parseEvents;
-        parseMetronomeEvents = sequencer.protectedScope.parseMetronomeEvents;
+    sequencerModule.protectedScope.addInitMethod(function initMetronome(){
+        context = sequencerModule.protectedScope.context;
+        findItem = sequencerModule.protectedScope.findItem;
+        getPosition = sequencerModule.protectedScope.getPosition;
+        createMidiNote = sequencerModule.createMidiNote;
+        objectForEach = sequencerModule.util.objectForEach;
+        parseEvents = sequencerModule.protectedScope.parseEvents;
+        parseMetronomeEvents = sequencerModule.protectedScope.parseMetronomeEvents;
     });
 }());(function(){
 
@@ -8116,13 +8123,13 @@
 
         @example
         // plays the central c at velocity 100
-        var event = sequencer.createMidiEvent(120, sequencer.NOTE_ON, 60, 100);
+        var event = sequencerModule.createMidiEvent(120, sequencerModule.NOTE_ON, 60, 100);
 
         // pass arguments as array
-        var event = sequencer.createMidiEvent([120, sequencer.NOTE_ON, 60, 100]);
+        var event = sequencerModule.createMidiEvent([120, sequencerModule.NOTE_ON, 60, 100]);
 
         // if you pass a MidiEvent instance a copy/clone will be returned
-        var copy = sequencer.createMidiEvent(event);
+        var copy = sequencerModule.createMidiEvent(event);
     */
 
 
@@ -8188,7 +8195,7 @@
                 data.push(args[4]);//channel
             }
         }else{
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('wrong number of arguments, please consult documentation');
             }
             return false;
@@ -8311,7 +8318,7 @@
     */
     MidiEvent.prototype.transpose = function(semi){
         if(this.type !== 0x80 && this.type !== 0x90){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('you can only transpose note on and note off events');
             }
             return;
@@ -8326,7 +8333,7 @@
                 semi = semi[1];
             }
         }else if(isNaN(semi) === true){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('please provide a number');
             }
             return;
@@ -8361,7 +8368,7 @@
 
     MidiEvent.prototype.setPitch = function(pitch){
         if(this.type !== 0x80 && this.type !== 0x90){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('you can only set the pitch of note on and note off events');
             }
             return;
@@ -8374,7 +8381,7 @@
                 pitch = pitch[1];
             }
         }else if(isNaN(pitch) === true){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('please provide a number');
             }
             return;
@@ -8402,7 +8409,7 @@
 
     MidiEvent.prototype.move = function(ticks){
         if(isNaN(ticks)){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('please provide a number');
             }
             return;
@@ -8424,13 +8431,13 @@
         if(position[0] === 'ticks' && isNaN(position[1]) === false){
             this.ticks = parseInt(position[1], 10);
         }else if(this.song === undefined){
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('The midi event has not been added to a song yet; you can only move to ticks values');
             }
         }else{
             position = this.song.getPosition(position);
             if(position === false){
-                if(sequencer.debug >= 1){
+                if(sequencerModule.debug >= 1){
                     console.error('wrong position data');
                 }
             }else{
@@ -8474,7 +8481,7 @@
 
 
     /**@exports sequencer*/
-    sequencer.createMidiEvent = function(){
+    sequencerModule.createMidiEvent = function(){
         /**
             @function createMidiEvent
             @param time {int}
@@ -8492,9 +8499,9 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createNote = sequencer.createNote;
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createNote = sequencerModule.createNote;
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 }());(function(){
@@ -8575,7 +8582,7 @@
         name = name.replace(/\s/g, '_');
         no = upperCaseToNumber[name] || false;
 
-        if(no === false && sequencer.debug === true){
+        if(no === false && sequencerModule.debug === true){
             console.warn(name, 'is not a valid (or supported) midi event name, please consult documentation');
         }
         return no;
@@ -8589,14 +8596,14 @@
 
         if(upperOrLower === 'lower'){
             name = numberToLowerCase[no] || false;
-            if(name === false && sequencer.debug === true){
+            if(name === false && sequencerModule.debug === true){
                 console.warn(no, 'is not a valid (or supported) midi event number, please consult documentation');
             }
             return name;
         }
 
         name = numberToUpperCase[no] || false;
-        if(name === false && sequencer.debug === true){
+        if(name === false && sequencerModule.debug === true){
             console.warn(no, 'is not a valid (or supported) midi event number, please consult documentation');
         }
         return name;
@@ -8616,32 +8623,32 @@
         @memberof sequencer
         @instance
     */
-    Object.defineProperty(sequencer, 'DUMMY_EVENT', {value: 0x0}); //0
-    Object.defineProperty(sequencer, 'MIDI_NOTE', {value: 0x70}); //112
+    Object.defineProperty(sequencerModule, 'DUMMY_EVENT', {value: 0x0}); //0
+    Object.defineProperty(sequencerModule, 'MIDI_NOTE', {value: 0x70}); //112
     //standard MIDI
-    Object.defineProperty(sequencer, 'NOTE_OFF', {value: 0x80}); //128
-    Object.defineProperty(sequencer, 'NOTE_ON', {value: 0x90}); //144
-    Object.defineProperty(sequencer, 'POLY_PRESSURE', {value: 0xA0}); //160
-    Object.defineProperty(sequencer, 'CONTROL_CHANGE', {value: 0xB0}); //176
-    Object.defineProperty(sequencer, 'PROGRAM_CHANGE', {value: 0xC0}); //192
-    Object.defineProperty(sequencer, 'CHANNEL_PRESSURE', {value: 0xD0}); //208
-    Object.defineProperty(sequencer, 'PITCH_BEND', {value: 0xE0}); //224
-    Object.defineProperty(sequencer, 'SYSTEM_EXCLUSIVE', {value: 0xF0}); //240
-    Object.defineProperty(sequencer, 'MIDI_TIMECODE', {value: 241});
-    Object.defineProperty(sequencer, 'SONG_POSITION', {value: 242});
-    Object.defineProperty(sequencer, 'SONG_SELECT', {value: 243});
-    Object.defineProperty(sequencer, 'TUNE_REQUEST', {value: 246});
-    Object.defineProperty(sequencer, 'EOX', {value: 247});
-    Object.defineProperty(sequencer, 'TIMING_CLOCK', {value: 248});
-    Object.defineProperty(sequencer, 'START', {value: 250});
-    Object.defineProperty(sequencer, 'CONTINUE', {value: 251});
-    Object.defineProperty(sequencer, 'STOP', {value: 252});
-    Object.defineProperty(sequencer, 'ACTIVE_SENSING', {value: 254});
-    Object.defineProperty(sequencer, 'SYSTEM_RESET', {value: 255});
+    Object.defineProperty(sequencerModule, 'NOTE_OFF', {value: 0x80}); //128
+    Object.defineProperty(sequencerModule, 'NOTE_ON', {value: 0x90}); //144
+    Object.defineProperty(sequencerModule, 'POLY_PRESSURE', {value: 0xA0}); //160
+    Object.defineProperty(sequencerModule, 'CONTROL_CHANGE', {value: 0xB0}); //176
+    Object.defineProperty(sequencerModule, 'PROGRAM_CHANGE', {value: 0xC0}); //192
+    Object.defineProperty(sequencerModule, 'CHANNEL_PRESSURE', {value: 0xD0}); //208
+    Object.defineProperty(sequencerModule, 'PITCH_BEND', {value: 0xE0}); //224
+    Object.defineProperty(sequencerModule, 'SYSTEM_EXCLUSIVE', {value: 0xF0}); //240
+    Object.defineProperty(sequencerModule, 'MIDI_TIMECODE', {value: 241});
+    Object.defineProperty(sequencerModule, 'SONG_POSITION', {value: 242});
+    Object.defineProperty(sequencerModule, 'SONG_SELECT', {value: 243});
+    Object.defineProperty(sequencerModule, 'TUNE_REQUEST', {value: 246});
+    Object.defineProperty(sequencerModule, 'EOX', {value: 247});
+    Object.defineProperty(sequencerModule, 'TIMING_CLOCK', {value: 248});
+    Object.defineProperty(sequencerModule, 'START', {value: 250});
+    Object.defineProperty(sequencerModule, 'CONTINUE', {value: 251});
+    Object.defineProperty(sequencerModule, 'STOP', {value: 252});
+    Object.defineProperty(sequencerModule, 'ACTIVE_SENSING', {value: 254});
+    Object.defineProperty(sequencerModule, 'SYSTEM_RESET', {value: 255});
 
-    Object.defineProperty(sequencer, 'TEMPO', {value: 0x51});
-    Object.defineProperty(sequencer, 'TIME_SIGNATURE', {value: 0x58});
-    Object.defineProperty(sequencer, 'END_OF_TRACK', {value: 0x2F});
+    Object.defineProperty(sequencerModule, 'TEMPO', {value: 0x51});
+    Object.defineProperty(sequencerModule, 'TIME_SIGNATURE', {value: 0x58});
+    Object.defineProperty(sequencerModule, 'END_OF_TRACK', {value: 0x2F});
 
     // public
     /**
@@ -8649,9 +8656,9 @@
         @instance
         @function checkEventType
     */
-    sequencer.checkEventType = checkEventType;
-    sequencer.midiEventNameByNumber = nameByNumber;
-    sequencer.midiEventNumberByName = numberByName;
+    sequencerModule.checkEventType = checkEventType;
+    sequencerModule.midiEventNameByNumber = nameByNumber;
+    sequencerModule.midiEventNumberByName = numberByName;
 
 }());/*
     parse method is based on: https://github.com/gasman/jasmid
@@ -8713,16 +8720,16 @@
 
         i = 0;
         numTracks = data.tracks.length;
-        if(sequencer.overrulePPQ === true && isNaN(sequencer.defaultPPQ) === false && sequencer.defaultPPQ > 0){
-            ppqFactor = sequencer.defaultPPQ/data.header.ticksPerBeat;
-            midifile.ppq = sequencer.defaultPPQ;
+        if(sequencerModule.overrulePPQ === true && isNaN(sequencerModule.defaultPPQ) === false && sequencerModule.defaultPPQ > 0){
+            ppqFactor = sequencerModule.defaultPPQ/data.header.ticksPerBeat;
+            midifile.ppq = sequencerModule.defaultPPQ;
         }else{
             ppqFactor = 1;
             midifile.ppq = data.header.ticksPerBeat;
         }
         timeEvents = [];
         midifile.tracks = [];
-        //console.log(ppqFactor, midifile.ppq, sequencer.overrulePPQ, sequencer.defaultPPQ);
+        //console.log(ppqFactor, midifile.ppq, sequencerModule.overrulePPQ, sequencerModule.defaultPPQ);
 
         while(i < numTracks){
             events = data.tracks[i];
@@ -8780,7 +8787,7 @@
                         /*
                         noteNumber = event.noteNumber;
                         if(tmpTicks === ticks && lastType === type && noteNumber === lastNoteOn){
-                            if(sequencer.debug >= 3){
+                            if(sequencerModule.debug >= 3){
                                 console.info('note on events on the same tick', j, tmpTicks, noteNumber, lastNoteOn, numTracks, parsed.length);
                             }
                             //parsed.pop();
@@ -8803,7 +8810,7 @@
                         /*
                         noteNumber = event.noteNumber;
                         if(tmpTicks === ticks && lastType === type && noteNumber === lastNoteOff){
-                            if(sequencer.debug >= 3){
+                            if(sequencerModule.debug >= 3){
                                 console.info('note off events on the same tick', j, tmpTicks, noteNumber, lastNoteOff, numTracks, parsed.length);
                             }
                             //parsed.pop();
@@ -8834,7 +8841,7 @@
                         //console.log('setTempo',bpm,event.microsecondsPerBeat);
 
                         if(tmpTicks === ticks && lastType === type){
-                            if(sequencer.debug >= 3){
+                            if(sequencerModule.debug >= 3){
                                 console.info('tempo events on the same tick', j, tmpTicks, bpm);
                             }
                             timeEvents.pop();
@@ -8851,7 +8858,7 @@
                     case 'timeSignature':
                         //see comment above ↑
                         if(tmpTicks === ticks && lastType === type){
-                            if(sequencer.debug >= 3){
+                            if(sequencerModule.debug >= 3){
                                 console.info('time signature events on the same tick', j, tmpTicks, event.numerator, event.denominator);
                             }
                             timeEvents.pop();
@@ -8878,7 +8885,7 @@
                             lastData1 !== undefined &&
                             lastData2 !== undefined
                         ){
-                            if(sequencer.debug >= 3){
+                            if(sequencerModule.debug >= 3){
                                 console.warn('double controller events on the same tick', j, tmpTicks, event.controllerType, event.value);
                             }
                         }else{
@@ -8956,7 +8963,7 @@
 
                     if(data.base64 === undefined){
                         cleanup(midifile, callback);
-                        if(sequencer.debug){
+                        if(sequencerModule.debug){
                             console.warn('no base64 data');
                         }
                         return;
@@ -8989,17 +8996,17 @@
 
 
     function store(midifile){
-        var occupied = findItem(midifile.localPath, sequencer.storage.midi, true),
+        var occupied = findItem(midifile.localPath, sequencerModule.storage.midi, true),
             action = midifile.action;
 
         //console.log(occupied);
         if(occupied && occupied.className === 'MidiFile' && action !== 'overwrite'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('there is already a midifile at', midifile.localPath);
                 cleanup(midifile);
             }
         }else{
-            storeItem(midifile, midifile.localPath, sequencer.storage.midi);
+            storeItem(midifile, midifile.localPath, sequencerModule.storage.midi);
         }
     }
 
@@ -9029,12 +9036,12 @@
     };
 
 
-    sequencer.addMidiFile = function(config, callback){
+    sequencerModule.addMidiFile = function(config, callback){
         var type = typeString(config),
             midifile, json, name, folder;
 
         if(type !== 'object'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('can\'t create a MidiFile with this data', config);
             }
             return false;
@@ -9048,14 +9055,14 @@
                 try{
                     json = JSON.parse(json);
                 }catch(e){
-                    if(sequencer.debug >= 2){
+                    if(sequencerModule.debug >= 2){
                         console.warn('can\'t create a MidiFile with this data', config);
                     }
                     return false;
                 }
             }
             if(json.base64 === undefined){
-                if(sequencer.debug >= 2){
+                if(sequencerModule.debug >= 2){
                     console.warn('can\'t create a MidiFile with this data', config);
                 }
                 return false;
@@ -9070,7 +9077,7 @@
 
         midifile = new MidiFile(config);
 
-        sequencer.addTask({
+        sequencerModule.addTask({
             type: 'load midifile',
             method: load,
             params: midifile
@@ -9082,7 +9089,7 @@
             }
         });
 
-        sequencer.startTaskQueue();
+        sequencerModule.startTaskQueue();
 
 
 /*
@@ -9130,24 +9137,24 @@
     }
 
 
-    sequencer.createMidiFile = function(config){
+    sequencerModule.createMidiFile = function(config){
         var mf = new MidiFile2(config);
         return mf._promise;
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        ajax = sequencer.protectedScope.ajax;
-        findItem = sequencer.protectedScope.findItem;
-        storeItem = sequencer.protectedScope.storeItem;
-        deleteItem = sequencer.protectedScope.deleteItem;
-        parseUrl = sequencer.protectedScope.parseUrl;
-        typeString = sequencer.protectedScope.typeString;
-        parseMidiFile = sequencer.protectedScope.parseMidiFile;
-        base64ToBinary = sequencer.protectedScope.base64ToBinary;
-        createPart = sequencer.createPart;
-        createTrack = sequencer.createTrack;
-        createMidiEvent = sequencer.createMidiEvent;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        ajax = sequencerModule.protectedScope.ajax;
+        findItem = sequencerModule.protectedScope.findItem;
+        storeItem = sequencerModule.protectedScope.storeItem;
+        deleteItem = sequencerModule.protectedScope.deleteItem;
+        parseUrl = sequencerModule.protectedScope.parseUrl;
+        typeString = sequencerModule.protectedScope.typeString;
+        parseMidiFile = sequencerModule.protectedScope.parseMidiFile;
+        base64ToBinary = sequencerModule.protectedScope.base64ToBinary;
+        createPart = sequencerModule.createPart;
+        createTrack = sequencerModule.createTrack;
+        createMidiEvent = sequencerModule.createMidiEvent;
     });
 
 }());(function(){
@@ -9220,9 +9227,9 @@
                 console.error('MidiNote has wrong velocity');
                 return;
             }
-            on = createMidiEvent(startTicks, sequencer.NOTE_ON, noteNumber, velocity);
+            on = createMidiEvent(startTicks, sequencerModule.NOTE_ON, noteNumber, velocity);
             if(off){
-                off = createMidiEvent(endTicks, sequencer.NOTE_OFF, noteNumber, 0);
+                off = createMidiEvent(endTicks, sequencerModule.NOTE_OFF, noteNumber, 0);
             }
         }else{
             console.error('wrong number of arguments, please consult documentation');
@@ -9251,7 +9258,7 @@
         this.id = 'N' + midiNoteId + new Date().getTime();
         this.name = on.noteName;
         this.className = 'MidiNote';
-        this.type = sequencer.MIDI_NOTE;
+        this.type = sequencerModule.MIDI_NOTE;
         midiNoteId++;
     };
 
@@ -9331,13 +9338,13 @@
         }
     };
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createMidiEvent = sequencer.createMidiEvent;
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createMidiEvent = sequencerModule.createMidiEvent;
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 
-    sequencer.createMidiNote = function(){
+    sequencerModule.createMidiNote = function(){
         return new MidiNote(Array.prototype.slice.call(arguments));
     };
 
@@ -9475,7 +9482,7 @@
                         event.data = stream.read(length);
                         return event;
                     default:
-                        //if(sequencer.debug >= 2){
+                        //if(sequencerModule.debug >= 2){
                         //    console.warn('Unrecognised meta event subtype: ' + subtypeByte);
                         //}
                         event.subtype = 'unknown';
@@ -9651,15 +9658,15 @@
     */
 
 
-    sequencer.protectedScope.parseMidiFile = function(buffer){
+    sequencerModule.protectedScope.parseMidiFile = function(buffer){
         return parseStream(createStream(buffer));
         //var dv = new DataView(buffer);
         //return parseStream(dv);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createStream = sequencer.protectedScope.createStream;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createStream = sequencerModule.protectedScope.createStream;
     });
 }());
 
@@ -9768,7 +9775,7 @@
     };
   }
 
-  sequencer.protectedScope.createStream = createStream;
+  sequencerModule.protectedScope.createStream = createStream;
 
 }());
 
@@ -9814,16 +9821,16 @@
                 // on success
                 function midiAccessOnSuccess(midi){
                     if(midi._jazzInstances !== undefined){
-                        sequencer.jazz = midi._jazzInstances[0]._Jazz.version;
-                        sequencer.midi = true;
+                        sequencerModule.jazz = midi._jazzInstances[0]._Jazz.version;
+                        sequencerModule.midi = true;
                     }else{
-                        sequencer.webmidi = true;
-                        sequencer.midi = true;
+                        sequencerModule.webmidi = true;
+                        sequencerModule.midi = true;
                     }
                     midiAccess = midi;
                     midiAccess.onstatechange = getDevices;
                     getDevices();
-                    //console.log(midi, sequencer.midi, sequencer.webmidi, sequencer.jazz);
+                    //console.log(midi, sequencerModule.midi, sequencerModule.webmidi, sequencerModule.jazz);
 
                     cb();
                 },
@@ -9835,7 +9842,7 @@
             );
         // browsers without WebMIDI API
         }else{
-            if(sequencer.browser === 'chrome'){
+            if(sequencerModule.browser === 'chrome'){
                 console.log('Web MIDI API not enabled');
             }else{
                 console.log('Web MIDI API not supported');
@@ -9855,7 +9862,7 @@
 
         inputs.forEach(function(input){
             midiInputsOrder.push({name: input.name, id: input.id});
-            sequencer.midiInputs[input.id] = input;
+            sequencerModule.midiInputs[input.id] = input;
         });
 
         midiInputsOrder.sort(function(a, b){
@@ -9869,14 +9876,14 @@
             return 0; //default return value (no sorting)
         });
 
-        sequencer.numMidiInputs = midiInputsOrder.length;
+        sequencerModule.numMidiInputs = midiInputsOrder.length;
 
 
         outputs = midiAccess.outputs;
 
         outputs.forEach(function(output){
             midiOutputsOrder.push({name: output.name, id: output.id});
-            sequencer.midiOutputs[output.id] = output;
+            sequencerModule.midiOutputs[output.id] = output;
         });
 
 
@@ -9891,7 +9898,7 @@
             return 0; //default return value (no sorting)
         });
 
-        sequencer.numMidiOutputs = midiOutputsOrder.length;
+        sequencerModule.numMidiOutputs = midiOutputsOrder.length;
     }
 
 
@@ -9902,25 +9909,25 @@
         };
 
         // by default a song listens to all available midi-in ports
-        objectForEach(sequencer.midiInputs, function(port){
+        objectForEach(sequencerModule.midiInputs, function(port){
             //port.addEventListener('midimessage', songMidiEventListener, false);
             port.onmidimessage = songMidiEventListener;
             song.midiInputs[port.id] = port;
             //console.log(port);
         });
-        //console.log(sequencer.midiInputs);
+        //console.log(sequencerModule.midiInputs);
 
-        objectForEach(sequencer.midiOutputs, function(port){
+        objectForEach(sequencerModule.midiOutputs, function(port){
             song.midiOutputs[port.id] = port;
         });
 
-        song.numMidiInputs = sequencer.numMidiInputs;
-        song.numMidiOutputs = sequencer.numMidiOutputs;
+        song.numMidiInputs = sequencerModule.numMidiInputs;
+        song.numMidiOutputs = sequencerModule.numMidiOutputs;
     }
 
 
     function setMidiInputSong(id, flag, song){
-        var input = sequencer.midiInputs[id],
+        var input = sequencerModule.midiInputs[id],
             tracks = song.tracks,
             maxi = song.numTracks - 1,
             i, track;
@@ -9928,7 +9935,7 @@
         flag = flag === undefined ? true : flag;
 
         if(input === undefined){
-            if(sequencer.debug === true){
+            if(sequencerModule.debug === true){
                 console.log('no midi input with id', id,'found');
             }
             return;
@@ -9956,7 +9963,7 @@
     }
 
     function setMidiOutputSong(id, flag, song){
-        var output = sequencer.midiOutputs[id],
+        var output = sequencerModule.midiOutputs[id],
             tracks = song.tracks,
             maxi = song.numTracks - 1,
             i, track, time;
@@ -9964,7 +9971,7 @@
         flag = flag === undefined ? true : flag;
 
         if(output === undefined){
-            if(sequencer.debug === true){
+            if(sequencerModule.debug === true){
                 console.log('no midi output with id', id,'found');
             }
             return;
@@ -10129,12 +10136,12 @@
                     listener = arg;
                 }else if(isNaN(arg) === false){
                     arg = parseInt(arg, 10);
-                    if(sequencer.checkEventType(arg) !== false){
+                    if(sequencerModule.checkEventType(arg) !== false){
                         types[arg] = arg;
                     }
                 }else if(type === 'string'){
-                    if(sequencer.checkEventType(arg) !== false){
-                        arg = sequencer.midiEventNumberByName(arg);
+                    if(sequencerModule.checkEventType(arg) !== false){
+                        arg = sequencerModule.midiEventNumberByName(arg);
                         types[arg] = arg;
                     }
                 }
@@ -10213,12 +10220,12 @@
     }
 
 
-    sequencer.getMidiPortsAsDropdown = function(){
+    sequencerModule.getMidiPortsAsDropdown = function(){
         getMidiPortsAsDropdown(sequencer);
     };
 
 
-    sequencer.getMidiInputsAsDropdown = function(config){
+    sequencerModule.getMidiInputsAsDropdown = function(config){
         config = config || {
             type: 'input'
         };
@@ -10226,7 +10233,7 @@
     };
 
 
-    sequencer.getMidiOutputsAsDropdown = function(config){
+    sequencerModule.getMidiOutputsAsDropdown = function(config){
         config = config || {
             type: 'output'
         };
@@ -10262,39 +10269,39 @@
     }
 
 
-    sequencer.getMidiInputs = function(cb){
+    sequencerModule.getMidiInputs = function(cb){
         getMidiInputs(cb, sequencer);
     };
 
 
-    sequencer.getMidiOutputs = function(cb){
+    sequencerModule.getMidiOutputs = function(cb){
         getMidiOutputs(cb, sequencer);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        context = sequencer.protectedScope.context;
-        createMidiNote = sequencer.createMidiNote;
-        createMidiEvent = sequencer.createMidiEvent;
-        typeString = sequencer.protectedScope.typeString;
-        objectForEach = sequencer.protectedScope.objectForEach;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        context = sequencerModule.protectedScope.context;
+        createMidiNote = sequencerModule.createMidiNote;
+        createMidiEvent = sequencerModule.createMidiEvent;
+        typeString = sequencerModule.protectedScope.typeString;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
     });
 
 
     // close_module.js
-    sequencer.protectedScope.initMidi = initMidi;
+    sequencerModule.protectedScope.initMidi = initMidi;
 
     // song.js
-    sequencer.protectedScope.initMidiSong = initMidiSong;
-    sequencer.protectedScope.getMidiInputs = getMidiInputs;
-    sequencer.protectedScope.getMidiOutputs = getMidiOutputs;
-    sequencer.protectedScope.setMidiInputSong = setMidiInputSong;
-    sequencer.protectedScope.setMidiOutputSong = setMidiOutputSong;
-    sequencer.protectedScope.addMidiEventListener = addMidiEventListener;
-    sequencer.protectedScope.getMidiPortsAsDropdown = getMidiPortsAsDropdown;
-    sequencer.protectedScope.removeMidiEventListener = removeMidiEventListener;
-    sequencer.protectedScope.removeMidiEventListeners = removeMidiEventListeners;
-    sequencer.protectedScope.handleMidiMessageTrack = handleMidiMessageTrack;
+    sequencerModule.protectedScope.initMidiSong = initMidiSong;
+    sequencerModule.protectedScope.getMidiInputs = getMidiInputs;
+    sequencerModule.protectedScope.getMidiOutputs = getMidiOutputs;
+    sequencerModule.protectedScope.setMidiInputSong = setMidiInputSong;
+    sequencerModule.protectedScope.setMidiOutputSong = setMidiOutputSong;
+    sequencerModule.protectedScope.addMidiEventListener = addMidiEventListener;
+    sequencerModule.protectedScope.getMidiPortsAsDropdown = getMidiPortsAsDropdown;
+    sequencerModule.protectedScope.removeMidiEventListener = removeMidiEventListener;
+    sequencerModule.protectedScope.removeMidiEventListeners = removeMidiEventListeners;
+    sequencerModule.protectedScope.handleMidiMessageTrack = handleMidiMessageTrack;
 
 }());
 
@@ -10310,7 +10317,7 @@
 
         //console.log(track.recordPart);
         if(song){
-            midiEvent = sequencer.createMidiEvent(song.ticks, data[0], data[1], data[2]);
+            midiEvent = sequencerModule.createMidiEvent(song.ticks, data[0], data[1], data[2]);
             //console.log(midiEvent);
             if(midiEvent.type === 144){
                 note = createMidiNote(midiEvent);
@@ -10342,8 +10349,8 @@
         }else{
             console.error('unexpected situation!');
             // does this ever happen?
-            midiEvent = sequencer.createMidiEvent(0, data[0], data[1], data[2]);
-            midiEvent.millis = song.recordTimestamp - sequencer.getTime();
+            midiEvent = sequencerModule.createMidiEvent(0, data[0], data[1], data[2]);
+            midiEvent.millis = song.recordTimestamp - sequencerModule.getTime();
             if(track.enableRetrospectiveRecording){
                 track.retrospectiveRecording.push(midiEvent);
             }
@@ -10370,7 +10377,7 @@
         console = window.console,
 
         AP = Array.prototype,
-        PPQ = sequencer.defaultPPQ,
+        PPQ = sequencerModule.defaultPPQ,
         HDR_CHUNKID = [
             'M'.charCodeAt(0),
             'T'.charCodeAt(0),
@@ -10438,7 +10445,7 @@
             uintArray[i] = byteArray[i];
         }
         midiFile = new Blob([uintArray], {type: 'application/x-midi', endings: 'transparent'});
-        saveAs(midiFile, song.name);
+        // saveAs(midiFile, song.name);
         //window.location.assign(window.URL.createObjectURL(midiFile));
     }
 
@@ -10616,8 +10623,8 @@
     }
 
 
-    sequencer.protectedScope.saveToMidiFile = write;
-    sequencer.saveSongAsMidiFile = write;
+    sequencerModule.protectedScope.saveToMidiFile = write;
+    sequencerModule.saveSongAsMidiFile = write;
 
 }());
 (function(){
@@ -10639,7 +10646,7 @@
 
     function load(url, cb, returnAsXML){
         if(url === undefined || cb === undefined){
-            if(sequencer.debug >= sequencer.WARN){
+            if(sequencerModule.debug >= sequencerModule.WARN){
                 console.warn('please provide an url and a callback method');
             }
         }
@@ -10702,7 +10709,7 @@
             step, alter, octave, voice, noteType, noteDuration, noteName, noteNumber, velocity,
             rest, chord,
             divisions, numerator, denominator,
-            ppq = sequencer.defaultPPQ,
+            ppq = sequencerModule.defaultPPQ,
             ticks;
 
         while((partNode = partIterator.iterateNext()) !== null) {
@@ -10713,8 +10720,8 @@
             velocity = parseInt((velocity/100) * 127);
 
             ticks = 0;
-            track = sequencer.createTrack(name);
-            part = sequencer.createPart();
+            track = sequencerModule.createTrack(name);
+            part = sequencerModule.createPart();
             track.addPart(part);
             tracks.push(track);
             events = [];
@@ -10737,7 +10744,7 @@
                 if(!isNaN(tmp1)){
                     numerator = tmp1;
                     denominator = tmp2;
-                    timeEvents.push(sequencer.createMidiEvent(ticks, sequencer.TIME_SIGNATURE, numerator, denominator));
+                    timeEvents.push(sequencerModule.createMidiEvent(ticks, sequencerModule.TIME_SIGNATURE, numerator, denominator));
                 }
                 //console.log(divisions, numerator, denominator);
 
@@ -10799,9 +10806,9 @@
                                 }
                             }
                             noteNumber = getNoteNumber(noteName, octave);
-                            noteOn = sequencer.createMidiEvent(ticks, sequencer.NOTE_ON, noteNumber, velocity);
+                            noteOn = sequencerModule.createMidiEvent(ticks, sequencerModule.NOTE_ON, noteNumber, velocity);
                             ticks += (noteDuration/divisions) * ppq;
-                            noteOff = sequencer.createMidiEvent(ticks, sequencer.NOTE_OFF, noteNumber, 0);
+                            noteOff = sequencerModule.createMidiEvent(ticks, sequencerModule.NOTE_OFF, noteNumber, 0);
                             if(chord !== null){
                                 ticks -= (noteDuration/divisions) * ppq;
                             }
@@ -10846,7 +10853,7 @@
             //console.log(tiedNotes);
         }
 
-        song = sequencer.createSong({
+        song = sequencerModule.createSong({
             bpm: 110,
             tracks: tracks[0],
             timeEvents: timeEvents,
@@ -10861,13 +10868,13 @@
         return xmlDoc;
     }
 
-    sequencer.loadMusicXML = load;
-    sequencer.parseMusicXML = parse;
+    sequencerModule.loadMusicXML = load;
+    sequencerModule.parseMusicXML = parse;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        ajax = sequencer.protectedScope.ajax;
-        typeString = sequencer.protectedScope.typeString;
-        getNoteNumber = sequencer.getNoteNumber;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        ajax = sequencerModule.protectedScope.ajax;
+        typeString = sequencerModule.protectedScope.typeString;
+        getNoteNumber = sequencerModule.getNoteNumber;
     });
 
 }());(function(){
@@ -10979,7 +10986,7 @@
             }else{
                 noteNameMode = isNoteMode(arg1);
                 if(!noteNameMode){
-                    noteNameMode = sequencer.noteNameMode;
+                    noteNameMode = sequencerModule.noteNameMode;
                     warn = arg1 + ' is not a valid note name mode, using ' + noteNameMode;
                 }
                 noteName = data[0];
@@ -11001,7 +11008,7 @@
             }else{
                 noteNameMode = isNoteMode(arg1);
                 if(!noteNameMode){
-                    noteNameMode = sequencer.noteNameMode;
+                    noteNameMode = sequencerModule.noteNameMode;
                     warn = arg1 + ' is not a valid note name mode, using ' + noteNameMode;
                 }
                 noteNumber = arg0;
@@ -11020,7 +11027,7 @@
             }else{
                 noteNameMode = isNoteMode(arg2);
                 if(!noteNameMode){
-                    noteNameMode = sequencer.noteNameMode;
+                    noteNameMode = sequencerModule.noteNameMode;
                     warn = arg2 + ' is not a valid note name mode, using ' + noteNameMode;
                 }
                 noteName = data[0];
@@ -11062,7 +11069,7 @@
 
 
     getNoteName = function(number, mode) {
-        mode = mode || sequencer.noteNameMode;
+        mode = mode || sequencerModule.noteNameMode;
         //console.log(mode);
         //var octave = Math.floor((number / 12) - 2), // → in Cubase central C = C3 instead of C4
         var octave = Math.floor((number / 12) - 1),
@@ -11073,7 +11080,7 @@
 
     getNoteNumber = function(name, octave, mode) {
         var key,index,i,maxi,number;
-        //mode = mode || sequencer.noteNameMode;
+        //mode = mode || sequencerModule.noteNameMode;
 
         //if(mode){}
 
@@ -11102,7 +11109,7 @@
 
 
     getFrequency = function(number){
-        return sequencer.pitch * pow(2,(number - 69)/12); // midi standard, see: http://en.wikipedia.org/wiki/MIDI_Tuning_Standard
+        return sequencerModule.pitch * pow(2,(number - 69)/12); // midi standard, see: http://en.wikipedia.org/wiki/MIDI_Tuning_Standard
     };
 
 
@@ -11191,7 +11198,7 @@
     };
 
 ///*
-    sequencer.getNoteNumber = function(){
+    sequencerModule.getNoteNumber = function(){
         var note = createNote.apply(this,arguments);
         if(note){
             return note.number;
@@ -11200,7 +11207,7 @@
     };
 
 
-    sequencer.getNoteName = function(){
+    sequencerModule.getNoteName = function(){
         var note = createNote.apply(this, arguments);
         if(note){
             return note.name;
@@ -11208,12 +11215,12 @@
         return false;
     };
 
-    sequencer.getNoteNameFromNoteNumber = function(number, mode){
+    sequencerModule.getNoteNameFromNoteNumber = function(number, mode){
         return getNoteName(number, mode);
     };
 
 
-    sequencer.getNoteOctave = function(){
+    sequencerModule.getNoteOctave = function(){
         var note = createNote.apply(this,arguments);
         if(note){
             return note.octave;
@@ -11222,7 +11229,7 @@
     };
 
 
-    sequencer.getFullNoteName = function(){
+    sequencerModule.getFullNoteName = function(){
         var note = createNote.apply(this,arguments);
         if(note){
             return note.fullName;
@@ -11231,7 +11238,7 @@
     };
 
 
-    sequencer.getFrequency = function(){
+    sequencerModule.getFrequency = function(){
         var note = createNote.apply(this,arguments);
         if(note){
             return note.frequency;
@@ -11240,7 +11247,7 @@
     };
 
 //*/
-    sequencer.isBlackKey = function(){
+    sequencerModule.isBlackKey = function(){
         var note = createNote.apply(this,arguments);
         if(note){
             return note.blackKey;
@@ -11249,21 +11256,21 @@
     };
 
 /*
-    sequencer.SHARP = 'sharp';
-    sequencer.FLAT = 'flat';
-    sequencer.ENHARMONIC_SHARP = 'enharmonic-sharp';
-    sequencer.ENHARMONIC_FLAT = 'enharmonic-flat';
+    sequencerModule.SHARP = 'sharp';
+    sequencerModule.FLAT = 'flat';
+    sequencerModule.ENHARMONIC_SHARP = 'enharmonic-sharp';
+    sequencerModule.ENHARMONIC_FLAT = 'enharmonic-flat';
 */
 
-    Object.defineProperty(sequencer, 'SHARP', {value: 'sharp'});
-    Object.defineProperty(sequencer, 'FLAT', {value: 'flat'});
-    Object.defineProperty(sequencer, 'ENHARMONIC_SHARP', {value: 'enharmonic-sharp'});
-    Object.defineProperty(sequencer, 'ENHARMONIC_FLAT', {value: 'enharmonic-flat'});
+    Object.defineProperty(sequencerModule, 'SHARP', {value: 'sharp'});
+    Object.defineProperty(sequencerModule, 'FLAT', {value: 'flat'});
+    Object.defineProperty(sequencerModule, 'ENHARMONIC_SHARP', {value: 'enharmonic-sharp'});
+    Object.defineProperty(sequencerModule, 'ENHARMONIC_FLAT', {value: 'enharmonic-flat'});
 
-    sequencer.createNote = createNote;
+    sequencerModule.createNote = createNote;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 }());    (function(){
@@ -11277,7 +11284,7 @@
 
         round = Math.round,
 
-        precision = Math.pow(10, sequencer.precision),
+        precision = Math.pow(10, sequencerModule.precision),
 
         //local
         factor,
@@ -11402,7 +11409,7 @@
     function updateEvent(event){
         var timeData, tickAsString;
 
-        timeData = sequencer.getNiceTime(millis);
+        timeData = sequencerModule.getNiceTime(millis);
 
         event.bpm = bpm;
         event.factor = factor;
@@ -11445,9 +11452,9 @@
 
 
 
-    sequencer.protectedScope.parseEvents = parse;
+    sequencerModule.protectedScope.parseEvents = parse;
 
-    sequencer.protectedScope.addInitMethod(function(){
+    sequencerModule.protectedScope.addInitMethod(function(){
     });
 
 }());
@@ -11641,7 +11648,7 @@
         event.barsAsArray = [bar, beat, sixteenth, tick];
 
 
-        var timeData = sequencer.getNiceTime(millis);
+        var timeData = sequencerModule.getNiceTime(millis);
 
         event.hour = timeData.hour;
         event.minute = timeData.minute;
@@ -11652,10 +11659,10 @@
     }
 
 
-    sequencer.protectedScope.parseTimeEvents = parse;
+    sequencerModule.protectedScope.parseTimeEvents = parse;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        createMidiEvent = sequencer.createMidiEvent;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        createMidiEvent = sequencerModule.createMidiEvent;
     });
 
 }());
@@ -11681,7 +11688,7 @@
 
             if(numEvents === 0){
                 //add at least one event in this range
-                event = createMidiEvent(0,sequencer.DUMMY_EVENT);
+                event = createMidiEvent(0,sequencerModule.DUMMY_EVENT);
                 //calculate position
                 diffTicks = range - ticks;
                 tick += diffTicks;
@@ -11730,7 +11737,7 @@
             numEvents = events.length;
             if(numEvents === 0){
                 //add at least one event in this range
-                event = createMidiEvent(range,sequencer.DUMMY_EVENT);
+                event = createMidiEvent(range,sequencerModule.DUMMY_EVENT);
                 //calculate position data
                 diffTicks = (range - millis)/millisPerTick;
                 tick += diffTicks;
@@ -11763,7 +11770,7 @@
 
 
     scaffoldingBars = function(){
-        var song = sequencer.song,
+        var song = sequencerModule.song,
             end = song.durationTicks,
             range = 0,
             bars = [],
@@ -11782,7 +11789,7 @@
             if(numEvents > 0){
                 getDataFromEvent(events[numEvents - 1]);
             }
-            event = createMidiEvent(0,sequencer.DUMMY_EVENT);
+            event = createMidiEvent(0,sequencerModule.DUMMY_EVENT);
 
             //calculate position of newly created event
             diffTicks = range - ticks;
@@ -11813,14 +11820,14 @@
 
 
 
-    sequencer.protectedScope.createScaffolding = function(song){
+    sequencerModule.protectedScope.createScaffolding = function(song){
         reset(song);
         scaffoldingTicks(song);
         scaffoldingMillis(song);
         console.log(song.eventRanges);
     };
 
-    sequencer.protectedScope.getScaffoldingBars = scaffoldingBars;
+    sequencerModule.protectedScope.getScaffoldingBars = scaffoldingBars;
 
 
 */(function(){
@@ -11945,7 +11952,7 @@
 
         if(events.length === 0){
             //console.error('Please provide one or more events, event ids, event indices, or an array of events, events ids, event indices');
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('no events added', part.name);
             }
             return false;
@@ -12005,7 +12012,7 @@
 
             e = newEvents[i];
 
-            if(e.type === sequencer.END_OF_TRACK || (e.className !== 'MidiEvent' && e.className !== 'AudioEvent')){
+            if(e.type === sequencerModule.END_OF_TRACK || (e.className !== 'MidiEvent' && e.className !== 'AudioEvent')){
                 continue;
             }
             if(e.className === 'AudioEvent' && part.hasAudioEvents !== true){
@@ -12438,7 +12445,7 @@
             event = this.events[i];
             noteNumber = event.noteNumber;
 
-            if(event.type === sequencer.NOTE_ON){
+            if(event.type === sequencerModule.NOTE_ON){
                 if(event.midiNote === undefined){
 
                     /*
@@ -12464,7 +12471,7 @@
                     notes[noteNumber].push(note);
                     //console.log('create note:', note.id, 'for:', noteNumber, 'ticks:', event.ticks);
                 }
-            }else if(event.type === sequencer.NOTE_OFF){
+            }else if(event.type === sequencerModule.NOTE_OFF){
                 //console.log(event.midiNote);
                 if(event.midiNote === undefined){
                     if(notes[noteNumber] === undefined){
@@ -12622,22 +12629,22 @@
         this.needsUpdate = false;
     };
 
-    sequencer.createPart = function(){
+    sequencerModule.createPart = function(){
         return new Part();
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
+    sequencerModule.protectedScope.addInitMethod(function(){
 
-        createMidiNote = sequencer.createMidiNote;
-        createMidiEvent = sequencer.createMidiEvent;
+        createMidiNote = sequencerModule.createMidiNote;
+        createMidiEvent = sequencerModule.createMidiEvent;
 
-        copyName = sequencer.protectedScope.copyName;
-        typeString = sequencer.protectedScope.typeString;
+        copyName = sequencerModule.protectedScope.copyName;
+        typeString = sequencerModule.protectedScope.typeString;
 
-        findEvent = sequencer.findEvent;
-        findNote = sequencer.findNote;
-        getStats = sequencer.getStats;
+        findEvent = sequencerModule.findEvent;
+        findNote = sequencerModule.findNote;
+        getStats = sequencerModule.getStats;
     });
 
 }());(function(){
@@ -12764,8 +12771,8 @@
             //event.mute = event.mute || event.part.mute || event.track.mute;
             if(event[this.unit] <= this.currentValue){
                 //console.log(event[this.unit], this.currentValue, event.type)
-                //if(event.mute === false && event.type !== sequencer.MIDI_NOTE && event.type !== sequencer.DUMMY_EVENT){
-                if(event.type !== sequencer.MIDI_NOTE && event.type !== sequencer.DUMMY_EVENT){
+                //if(event.mute === false && event.type !== sequencerModule.MIDI_NOTE && event.type !== sequencerModule.DUMMY_EVENT){
+                if(event.type !== sequencerModule.MIDI_NOTE && event.type !== sequencerModule.DUMMY_EVENT){
                     //console.log(event.mute, event.part.mute, event.track.mute);
                     collectedEvents.push(event);
                 }
@@ -12896,7 +12903,7 @@
                 }
 
                 if(note.noteOff === undefined){
-                    if(sequencer.debug){
+                    if(sequencerModule.debug){
                         console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
                     }
                     continue;
@@ -12922,7 +12929,7 @@
                 note = collectedNotes[i];
 
                 if(note.noteOff === undefined){
-                    if(sequencer.debug){
+                    if(sequencerModule.debug){
                         console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
                     }
                     continue;
@@ -13000,15 +13007,15 @@
     };
 
 
-    sequencer.protectedScope.createPlayhead = function(song, type, name, data){
+    sequencerModule.protectedScope.createPlayhead = function(song, type, name, data){
         return new Playhead(song, type, name, data);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        getPosition2 = sequencer.protectedScope.getPosition2;
-        objectForEach = sequencer.protectedScope.objectForEach;
-        debug = sequencer.debug;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        getPosition2 = sequencerModule.protectedScope.getPosition2;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
+        debug = sequencerModule.debug;
     });
 
 }());(function(){
@@ -13359,7 +13366,7 @@
                 break;
 
             case 'time':
-                timeData = sequencer.getNiceTime(millis);
+                timeData = sequencerModule.getNiceTime(millis);
                 positionData.hour = timeData.hour;
                 positionData.minute = timeData.minute;
                 positionData.second = timeData.second;
@@ -13388,7 +13395,7 @@
                 positionData.barsAsString = bar + ':' + beat + ':' + sixteenth + ':' + tickAsString;
 
                 // time
-                timeData = sequencer.getNiceTime(millis);
+                timeData = sequencerModule.getNiceTime(millis);
                 positionData.hour = timeData.hour;
                 positionData.minute = timeData.minute;
                 positionData.second = timeData.second;
@@ -13574,21 +13581,21 @@
     };
 
 
-    sequencer.protectedScope.getPosition = getPosition;
-    sequencer.protectedScope.getPosition2 = getPosition2;
-    sequencer.protectedScope.checkPosition = checkPosition;
+    sequencerModule.protectedScope.getPosition = getPosition;
+    sequencerModule.protectedScope.getPosition2 = getPosition2;
+    sequencerModule.protectedScope.checkPosition = checkPosition;
 
-    sequencer.protectedScope.millisToTicks = millisToTicks;
-    sequencer.protectedScope.ticksToMillis = ticksToMillis;
-    sequencer.protectedScope.ticksToBars = ticksToBars;
-    sequencer.protectedScope.millisToBars = millisToBars;
-    sequencer.protectedScope.barsToTicks = barsToTicks;
-    sequencer.protectedScope.barsToMillis = barsToMillis;
+    sequencerModule.protectedScope.millisToTicks = millisToTicks;
+    sequencerModule.protectedScope.ticksToMillis = ticksToMillis;
+    sequencerModule.protectedScope.ticksToBars = ticksToBars;
+    sequencerModule.protectedScope.millisToBars = millisToBars;
+    sequencerModule.protectedScope.barsToTicks = barsToTicks;
+    sequencerModule.protectedScope.barsToMillis = barsToMillis;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        round = sequencer.protectedScope.round;
-        floor = sequencer.protectedScope.floor;
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        round = sequencerModule.protectedScope.round;
+        floor = sequencerModule.protectedScope.floor;
+        typeString = sequencerModule.protectedScope.typeString;
     });
 }());
 (function(){
@@ -13730,8 +13737,8 @@
             //alert(event.offset + ':' + event.duration);
             //this.source.start(event.time, 0, 0);
             //this.source.start(event.time);
-            //console.log('start', event.time, event.offset, event.duration, sequencer.getTime());
-            //console.log('start', time, sequencer.getTime());
+            //console.log('start', event.time, event.offset, event.duration, sequencerModule.getTime());
+            //console.log('start', time, sequencerModule.getTime());
         }catch(e){
             console.warn(e);
         }
@@ -13744,7 +13751,7 @@
         //console.log('NOTE OFF', this.source);
         //console.log('NOTE OFF', this.release);
         if(this.source === undefined){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('Sample.stop() source is undefined');
             }
             return;
@@ -13753,7 +13760,7 @@
         // this happens when midi events are sent live from a midi device
         if(seconds === 0 || seconds === undefined){
             //console.log('seconds is undefined!');
-            seconds = sequencer.getTime();
+            seconds = sequencerModule.getTime();
         }
         this.stopCallback = cb || function(){};
 
@@ -13843,7 +13850,7 @@
     };
 
 
-    sequencer.createSample = function(config){
+    sequencerModule.createSample = function(config){
         var debug = false;
         //return new Sample(config);
         //console.log(config.release_duration);
@@ -13876,16 +13883,16 @@
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        var createClass = sequencer.protectedScope.createClass;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        var createClass = sequencerModule.protectedScope.createClass;
 
-        context = sequencer.protectedScope.context;
-        timedTasks = sequencer.protectedScope.timedTasks;
-        getEqualPowerCurve = sequencer.util.getEqualPowerCurve;
-        legacy = sequencer.legacy;
-        getSampleId = sequencer.protectedScope.getSampleId;
-        typeString = sequencer.protectedScope.typeString;
-        createPanner = sequencer.createPanner;
+        context = sequencerModule.protectedScope.context;
+        timedTasks = sequencerModule.protectedScope.timedTasks;
+        getEqualPowerCurve = sequencerModule.util.getEqualPowerCurve;
+        legacy = sequencerModule.legacy;
+        getSampleId = sequencerModule.protectedScope.getSampleId;
+        typeString = sequencerModule.protectedScope.typeString;
+        createPanner = sequencerModule.createPanner;
 
 
         SampleRelease = createClass(Sample, function(config){
@@ -14149,7 +14156,7 @@
         }, function(){
             pack.loaded = true;
             pack.parseTime = parseTime;
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.info('parsing', pack.name, 'took', parseTime * 1000, 'ms');
             }
             //console.log(pack.localPath, pack.loaded);
@@ -14168,7 +14175,7 @@
 
 
     function store(samplepack){
-        var occupied = findItem(samplepack.localPath, sequencer.storage.samplepacks, true),
+        var occupied = findItem(samplepack.localPath, sequencerModule.storage.samplepacks, true),
             action = samplepack.action,
             i, samples, sample;
 
@@ -14180,7 +14187,7 @@
                 samples = occupied.samples;
                 for(i = samples.length - 1; i >= 0; i--){
                     sample = samples[i];
-                    deleteItem(sample.name + '/' + sample.folder, sequencer.storage.audio);
+                    deleteItem(sample.name + '/' + sample.folder, sequencerModule.storage.audio);
                 }
             }else if(action === 'append'){
                 samples = occupied.samples;
@@ -14188,14 +14195,14 @@
                     samplepack.samples.push(samples[i]);
                 }
             }else{
-                if(sequencer.debug >= 2){
+                if(sequencerModule.debug >= 2){
                     console.warn('there is already a samplepack at', samplepack.localPath);
                 }
                 return false;
             }
         }
 
-        storeItem(samplepack, samplepack.localPath, sequencer.storage.samplepacks);
+        storeItem(samplepack, samplepack.localPath, sequencerModule.storage.samplepacks);
         return true;
     }
 
@@ -14217,7 +14224,7 @@
                     }
 
                     if(data.mapping === undefined){
-                        if(sequencer.debug >= 2){
+                        if(sequencerModule.debug >= 2){
                             console.warn('can\'t create a SamplePack with this data', data);
                         }
                         cleanup(pack, callback);
@@ -14334,13 +14341,13 @@
     // private
     function parseAudioData(audiodata, callback){
         //console.log(audiodata, typeString(audiodata), audiodata.byteLength, ArrayBuffer.isView(audiodata));
-        var ts = sequencer.getTime();
+        var ts = sequencerModule.getTime();
         //console.log(ts);
         if(audiodata !== null){
             try{
                 context.decodeAudioData(audiodata, function(buffer){
                     //console.log(buffer);
-                    parseTime += (sequencer.getTime() - ts);
+                    parseTime += (sequencerModule.getTime() - ts);
                     callback(buffer);
                 }, function(e){
                     console.log('error decoding audiodata', sampleId, e);
@@ -14407,7 +14414,7 @@
     };
 
 
-    sequencer.addSamplePack = function(config, callback, callbackAfterAllTasksAreDone){
+    sequencerModule.addSamplePack = function(config, callback, callbackAfterAllTasksAreDone){
         var type = typeString(config),
             samplepack, json, name, folder;
 
@@ -14416,7 +14423,7 @@
         //console.log(config);
 
         if(type !== 'object'){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('can\'t create a SamplePack with this data', config);
             }
             return false;
@@ -14430,14 +14437,14 @@
                 try{
                     json = JSON.parse(json);
                 }catch(e){
-                    if(sequencer.debug >= 2){
+                    if(sequencerModule.debug >= 2){
                         console.warn('can\'t create a SamplePack with this data', config);
                     }
                     return false;
                 }
             }
             if(json.mapping === undefined){
-                if(sequencer.debug >= 2){
+                if(sequencerModule.debug >= 2){
                     console.warn('can\'t create a SamplePack with this data', config);
                 }
                 return false;
@@ -14454,7 +14461,7 @@
         samplepack = new SamplePack(config);
         //console.log(samplepack.filesize);
 
-        sequencer.addTask({
+        sequencerModule.addTask({
             type: 'load sample pack',
             method: load,
             params: samplepack
@@ -14470,7 +14477,7 @@
             }
         }, callbackAfterAllTasksAreDone);
 
-        sequencer.startTaskQueue();
+        sequencerModule.startTaskQueue();
 
 /*
         load(samplepack, function(){
@@ -14483,16 +14490,16 @@
 */
     };
 
-    sequencer.protectedScope.addInitMethod(function(){
-        storage = sequencer.storage;
-        ajax = sequencer.protectedScope.ajax;
-        context = sequencer.protectedScope.context;
-        findItem = sequencer.protectedScope.findItem;
-        parseUrl = sequencer.protectedScope.parseUrl;
-        storeItem = sequencer.protectedScope.storeItem;
-        deleteItem = sequencer.protectedScope.deleteItem;
-        typeString = sequencer.protectedScope.typeString;
-        base64ToBinary = sequencer.protectedScope.base64ToBinary;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        storage = sequencerModule.storage;
+        ajax = sequencerModule.protectedScope.ajax;
+        context = sequencerModule.protectedScope.context;
+        findItem = sequencerModule.protectedScope.findItem;
+        parseUrl = sequencerModule.protectedScope.parseUrl;
+        storeItem = sequencerModule.protectedScope.storeItem;
+        deleteItem = sequencerModule.protectedScope.deleteItem;
+        typeString = sequencerModule.protectedScope.typeString;
+        base64ToBinary = sequencerModule.protectedScope.base64ToBinary;
     });
 
 }());(function () {
@@ -14508,7 +14515,7 @@
         objectForEach, // defined in util.js
 
         // the amount of time in millis that events are scheduled ahead relative to the current playhead position, defined in open_module.js
-        //bufferTime = sequencer.bufferTime * 1000,
+        //bufferTime = sequencerModule.bufferTime * 1000,
 
         Scheduler;
 
@@ -14588,7 +14595,7 @@
     Scheduler.prototype.getEvents = function () {
         var i, event, events = [], note, noteOn, noteOff, endMillis, endTicks, diff, buffertime, audioEvent;
 
-        buffertime = sequencer.bufferTime * 1000;
+        buffertime = sequencerModule.bufferTime * 1000;
         if (this.song.doLoop === true && this.song.loopDuration < buffertime) {
             this.maxtime = this.songMillis + this.song.loopDuration - 1;
             //console.log(maxtime, this.song.loopDuration);
@@ -14631,7 +14638,7 @@
                             if (noteOff.millis <= this.song.loopEnd) {
                                 continue;
                             }
-                            event = sequencer.createMidiEvent(endTicks, 128, noteOn.data1, 0);
+                            event = sequencerModule.createMidiEvent(endTicks, 128, noteOn.data1, 0);
                             event.millis = endMillis;
                             event.part = noteOn.part;
                             event.track = noteOn.track;
@@ -14730,13 +14737,13 @@
 
         if (this.song.precounting === true) {
             this.songMillis = this.song.metronome.millis;
-            this.maxtime = this.songMillis + (sequencer.bufferTime * 1000);
+            this.maxtime = this.songMillis + (sequencerModule.bufferTime * 1000);
             events = [].concat(this.song.metronome.getPrecountEvents(this.maxtime));
 
             if (this.maxtime > this.song.metronome.endMillis) {
                 // start scheduling events of the song -> add the first events of the song
                 this.songMillis = 0;//this.song.millis;
-                this.maxtime = this.song.millis + (sequencer.bufferTime * 1000);
+                this.maxtime = this.song.millis + (sequencerModule.bufferTime * 1000);
                 this.startTime = this.song.startTime;
                 this.startTime2 = this.song.startTime2;
                 this.songStartMillis = this.song.startMillis;
@@ -14744,7 +14751,7 @@
             }
         } else {
             this.songMillis = this.song.millis;
-            this.maxtime = this.songMillis + (sequencer.bufferTime * 1000);
+            this.maxtime = this.songMillis + (sequencerModule.bufferTime * 1000);
             this.startTime = this.song.startTime;
             this.startTime2 = this.song.startTime2;
             this.songStartMillis = this.song.startMillis;
@@ -14778,7 +14785,7 @@
 
                 if (track.routeToMidiOut === false) {
                     // if(event.type === 144){
-                    //     console.log(event.time/1000, sequencer.getTime(), event.time/1000 - sequencer.getTime());
+                    //     console.log(event.time/1000, sequencerModule.getTime(), event.time/1000 - sequencerModule.getTime());
                     // }
                     event.time /= 1000;
                     //console.log('scheduled', event.type, event.time, event.midiNote.id);
@@ -14791,7 +14798,7 @@
                     }
                     objectForEach(track.midiOutputs, function (midiOutput) {
                         if (event.type === 128 || event.type === 144 || event.type === 176) {
-                            //midiOutput.send([event.type, event.data1, event.data2], event.time + sequencer.midiOutLatency);
+                            //midiOutput.send([event.type, event.data1, event.data2], event.time + sequencerModule.midiOutLatency);
                             midiOutput.send([event.type + channel, event.data1, event.data2], event.time);
                         } else if (event.type === 192 || event.type === 224) {
                             midiOutput.send([event.type + channel, event.data1], event.time);
@@ -14851,13 +14858,13 @@
         }
     };
 
-    sequencer.protectedScope.addInitMethod(function () {
-        typeString = sequencer.protectedScope.typeString;
-        objectForEach = sequencer.protectedScope.objectForEach;
+    sequencerModule.protectedScope.addInitMethod(function () {
+        typeString = sequencerModule.protectedScope.typeString;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
     });
 
 
-    sequencer.protectedScope.createScheduler = function (song) {
+    sequencerModule.protectedScope.createScheduler = function (song) {
         return new Scheduler(song);
     };
 
@@ -14903,7 +14910,7 @@
     }
 
 
-    sequencer.getSongs = function(){
+    sequencerModule.getSongs = function(){
         return activeSongs;
     };
 
@@ -14918,7 +14925,7 @@
         }
     }
 
-    sequencer.deleteSong = function(song){
+    sequencerModule.deleteSong = function(song){
         if(song === undefined || song === null || song.className !== 'Song'){
             return;
         }
@@ -14981,7 +14988,7 @@
     };
 
 
-    sequencer.getSnapshot = function(song, id){
+    sequencerModule.getSnapshot = function(song, id){
 
         if(song === undefined){
             console.error('song is undefined');
@@ -15049,7 +15056,7 @@
 
 
     heartbeat = function(timestamp) {
-        var i, diff, task, now = sequencer.getTime();
+        var i, diff, task, now = sequencerModule.getTime();
 
         // if(isEmptyObject(timedTasks) === false){
         //     console.log(timedTasks);
@@ -15085,16 +15092,16 @@
         // skip the first 10 frames because they tend to have weird intervals
         if(r >= 10){
             diff = (timestamp - lastTimeStamp)/1000;
-            sequencer.diff = diff;
+            sequencerModule.diff = diff;
             // if(r < 40){
             //     console.log(diff);
             //     r++;
             // }
-            if(diff > sequencer.bufferTime && sequencer.autoAdjustBufferTime === true){
-                if(sequencer.debug){
-                    console.log('adjusted buffertime:' + sequencer.bufferTime + ' -> ' +  diff);
+            if(diff > sequencerModule.bufferTime && sequencerModule.autoAdjustBufferTime === true){
+                if(sequencerModule.debug){
+                    console.log('adjusted buffertime:' + sequencerModule.bufferTime + ' -> ' +  diff);
                 }
-                sequencer.bufferTime = diff;
+                sequencerModule.bufferTime = diff;
             }
         }else{
             r++;
@@ -15107,7 +15114,7 @@
     };
 
 
-    sequencer.processEvent = sequencer.processEvents = function(){
+    sequencerModule.processEvent = sequencerModule.processEvents = function(){
         var args = slice.call(arguments),
             loop, arg, i, maxi, time, contextTime, event,
             bpm = 60,
@@ -15142,8 +15149,8 @@
 
         loop(args, 0, args.length);
 
-        part = sequencer.createPart();
-        track = sequencer.createTrack();
+        part = sequencerModule.createPart();
+        track = sequencerModule.createTrack();
         track.setInstrument(instrument);
 
         if(processEventTracks[track.instrumentId] === undefined){
@@ -15159,8 +15166,8 @@
         track.update();
 
         maxi = events.length;
-        contextTime = sequencer.getTime();
-        secondsPerTick = 60/bpm/sequencer.defaultPPQ;
+        contextTime = sequencerModule.getTime();
+        secondsPerTick = 60/bpm/sequencerModule.defaultPPQ;
         for(i = 0; i < maxi; i++){
             event = events[i];
             event.time = contextTime + (event.ticks * secondsPerTick) + (2/1000);//ms -> sec, add 2 ms prebuffer time
@@ -15172,7 +15179,7 @@
     };
 
 
-    sequencer.stopProcessEvent = sequencer.stopProcessEvents = function(){
+    sequencerModule.stopProcessEvent = sequencerModule.stopProcessEvents = function(){
         objectForEach(processEventTracks, function(track){
             track.instrument.allNotesOff();
             track = undefined;
@@ -15181,7 +15188,7 @@
     };
 
 
-    sequencer.play = function(){
+    sequencerModule.play = function(){
         var args = slice.call(arguments),
             events = [],
             parts = [],
@@ -15191,7 +15198,7 @@
             i, arg, loop, store = false,
             song, track, part, bpm, nominator, denominator, instrument;
 
-        //console.log('sequencer.play()', args);
+        //console.log('sequencerModule.play()', args);
 
         loop = function(data, i, maxi, indentation){
             for(i = 0; i < maxi; i++){
@@ -15272,16 +15279,16 @@
         }
 
         if(parts.length > 0){
-            track = sequencer.createTrack();
+            track = sequencerModule.createTrack();
             track.instrument = instrument;
             track.addParts(parts);
             tracks.push(track);
         }
 
         if(events.length > 0){
-            track = sequencer.createTrack();
+            track = sequencerModule.createTrack();
             track.instrument = instrument;
-            part = sequencer.createPart();
+            part = sequencerModule.createPart();
             part.addEvents(events);
             track.addPart(part);
             tracks.push(track);
@@ -15290,7 +15297,7 @@
 
         //console.log(songs.length, tracks.length, parts.length, events.length, bpm, nominator, denominator);
 
-        song = sequencer.createSong({
+        song = sequencerModule.createSong({
             bpm: bpm || 120,
             nominator: nominator || 4,
             denominator: denominator || 4,
@@ -15324,7 +15331,7 @@
 */
 
 
-    sequencer.setAnimationFrameType = function(type, interval) {
+    sequencerModule.setAnimationFrameType = function(type, interval) {
         type = type || 'default';
         type = type.toLowerCase();
         interval = interval || 15;
@@ -15350,7 +15357,7 @@
 
 
     // used by asset_manager.js if an instrument or a sample pack has been unloaded
-    sequencer.protectedScope.updateInstruments = function(){
+    sequencerModule.protectedScope.updateInstruments = function(){
         var i, j, tracks, track, song;
 
         for(i in activeSongs){
@@ -15367,7 +15374,7 @@
     };
 
 
-    sequencer.allNotesOff = function(){
+    sequencerModule.allNotesOff = function(){
         objectForEach(activeSongs, function(song){
             song.allNotesOff();
         });
@@ -15375,15 +15382,15 @@
 
 
     window.onblur = function(){
-        if(sequencer.pauseOnBlur === false){
+        if(sequencerModule.pauseOnBlur === false){
             return;
         }
-        //console.log('blur', sequencer.getTime() * 1000);
-        sequencer.allNotesOff();
+        //console.log('blur', sequencerModule.getTime() * 1000);
+        sequencerModule.allNotesOff();
         pausedSongs = [];
         objectForEach(activeSongs, function(song){
             if(song.playing === true){
-                if(sequencer.debug){
+                if(sequencerModule.debug){
                     console.log('pause song', song.id);
                 }
                 pausedSongs.push(song);
@@ -15395,17 +15402,17 @@
 
 
     window.onfocus = function(){
-        if(sequencer.pauseOnBlur === false){
+        if(sequencerModule.pauseOnBlur === false){
             return;
         }
-        //console.log('focus', sequencer.getTime() * 1000);
+        //console.log('focus', sequencerModule.getTime() * 1000);
         var song, millis, i, maxi = pausedSongs.length;
         for(i = 0; i < maxi; i++){
             song = pausedSongs[i];
             millis = song.millis;
             song.stop();
             song.setPlayhead('millis', millis);
-            if(sequencer.restartOnFocus){
+            if(sequencerModule.restartOnFocus){
                 song.play();
             }
         }
@@ -15413,21 +15420,21 @@
     };
 
 
-    sequencer.protectedScope.addSong = addSong;
+    sequencerModule.protectedScope.addSong = addSong;
 
-    sequencer.protectedScope.addInitMethod(function() {
-        objectToArray = sequencer.protectedScope.objectToArray;
-        isEmptyObject = sequencer.protectedScope.isEmptyObject;
-        isEmptyObject = sequencer.protectedScope.isEmptyObject;
-        objectForEach = sequencer.protectedScope.objectForEach;
-        timedTasks = sequencer.protectedScope.timedTasks;
-        scheduledTasks = sequencer.protectedScope.scheduledTasks;
-        repetitiveTasks = sequencer.protectedScope.repetitiveTasks;
-        typeString = sequencer.protectedScope.typeString;
-        context = sequencer.protectedScope.context;
-        createMidiEvent = sequencer.createMidiEvent;
-        masterGainNode = sequencer.protectedScope.masterGainNode;
-        parseTimeEvents = sequencer.protectedScope.parseTimeEvents;
+    sequencerModule.protectedScope.addInitMethod(function() {
+        objectToArray = sequencerModule.protectedScope.objectToArray;
+        isEmptyObject = sequencerModule.protectedScope.isEmptyObject;
+        isEmptyObject = sequencerModule.protectedScope.isEmptyObject;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
+        timedTasks = sequencerModule.protectedScope.timedTasks;
+        scheduledTasks = sequencerModule.protectedScope.scheduledTasks;
+        repetitiveTasks = sequencerModule.protectedScope.repetitiveTasks;
+        typeString = sequencerModule.protectedScope.typeString;
+        context = sequencerModule.protectedScope.context;
+        createMidiEvent = sequencerModule.createMidiEvent;
+        masterGainNode = sequencerModule.protectedScope.masterGainNode;
+        parseTimeEvents = sequencerModule.protectedScope.parseTimeEvents;
         heartbeat();
     });
 
@@ -15439,7 +15446,7 @@
 /*
     // removed for clarity
 
-    sequencer.play = function(song){
+    sequencerModule.play = function(song){
         song = checkSong(song);
         if(song === false){
             console.error('no song loaded or specified');
@@ -15449,7 +15456,7 @@
     };
 
 
-    sequencer.pause = function(song){
+    sequencerModule.pause = function(song){
         song = checkSong(song);
         if(song === false){
             console.error('no song loaded or specified');
@@ -15459,7 +15466,7 @@
     };
 
 
-    sequencer.stop = function(song){
+    sequencerModule.stop = function(song){
         song = checkSong(song);
         if(song === false){
             console.error('no song loaded or specified');
@@ -15469,29 +15476,29 @@
     };
 
 
-    sequencer.addEventListener = function(){
-        if(sequencer.song === undefined){
+    sequencerModule.addEventListener = function(){
+        if(sequencerModule.song === undefined){
             console.error('no song in sequencer');
             return;
         }
-        return sequencer.song.addEventListener.apply(sequencer.song, arguments);
+        return sequencerModule.song.addEventListener.apply(sequencerModule.song, arguments);
     };
 
 
-    sequencer.removeEventListener = function(){
-        if(sequencer.song === undefined){
+    sequencerModule.removeEventListener = function(){
+        if(sequencerModule.song === undefined){
             console.error('no song in sequencer');
             return;
         }
-        return sequencer.song.removeEventListener.apply(sequencer.song, arguments);
+        return sequencerModule.song.removeEventListener.apply(sequencerModule.song, arguments);
     };
 
 
     checkSong = function(song){
         if(song){
             return song.className === 'Song' ? song : false;
-        }else if(sequencer.song){
-            return sequencer.song.className === 'Song' ? sequencer.song : false;
+        }else if(sequencerModule.song){
+            return sequencerModule.song.className === 'Song' ? sequencerModule.song : false;
         }else{
             return false;
         }
@@ -15503,7 +15510,7 @@
 
 
 /*
-    sequencer.playEvents = function(){
+    sequencerModule.playEvents = function(){
         var args = slice.call(arguments),
             i, arg, loop, bpm, nominator, denominator,
             part, song, events = [];
@@ -15534,7 +15541,7 @@
 
         //console.log(events, bpm, nominator, denominator);
 
-        song = sequencer.createSong({
+        song = sequencerModule.createSong({
             bpm: bpm || 120,
             nominator: nominator || 4,
             denominator: denominator || 4,
@@ -15558,17 +15565,17 @@
 /*
     // moved to song
 
-    sequencer.midiIn = function(){// events, [song|track|part]
+    sequencerModule.midiIn = function(){// events, [song|track|part]
 
     };
 
 
-    sequencer.midiOut = function(){// channel
+    sequencerModule.midiOut = function(){// channel
 
     };
 
 
-    sequencer.midiThru = function(){// channel
+    sequencerModule.midiThru = function(){// channel
 
     };
 
@@ -15635,7 +15642,7 @@
         findNote, // → defined in find_event.js
 
         objectForEach, // → defined in util.js
-        addSong, // → defined in sequencer.js
+        addSong, // → defined in sequencerModule.js
 
         //private
         _removeTracks,
@@ -15673,7 +15680,7 @@
         initMidi(this);
 
         this.bpm = config.bpm || 120;
-        this.ppq = config.ppq || sequencer.defaultPPQ;
+        this.ppq = config.ppq || sequencerModule.defaultPPQ;
         this.bars = config.bars || 30; //default song duration is 30 bars @ 120 bpm is 1 minute
         this.lastBar = this.bars;
         this.lowestNote = config.lowestNote || 0;
@@ -15691,7 +15698,7 @@
         this.useMetronome = config.useMetronome;
         this.autoSize = config.autoSize === undefined ? true : config.autoSize === true;
         this.playbackSpeed = 1;
-        this.defaultInstrument = config.defaultInstrument || sequencer.defaultInstrument;
+        this.defaultInstrument = config.defaultInstrument || sequencerModule.defaultInstrument;
         this.recordId = -1;
         this.autoQuantize = false;
         this.loop = config.loop || false;
@@ -15714,17 +15721,17 @@
         if(config.timeEvents && config.timeEvents.length > 0){
             this.timeEvents = [].concat(config.timeEvents);
 
-            this.tempoEvent = getTimeEvents(sequencer.TEMPO, this)[0];
-            this.timeSignatureEvent = getTimeEvents(sequencer.TIME_SIGNATURE, this)[0];
+            this.tempoEvent = getTimeEvents(sequencerModule.TEMPO, this)[0];
+            this.timeSignatureEvent = getTimeEvents(sequencerModule.TIME_SIGNATURE, this)[0];
 
             if(this.tempoEvent === undefined){
-                this.tempoEvent = createMidiEvent(0, sequencer.TEMPO, this.bpm);
+                this.tempoEvent = createMidiEvent(0, sequencerModule.TEMPO, this.bpm);
                 this.timeEvents.unshift(this.tempoEvent);
             }else{
                 this.bpm = this.tempoEvent.bpm;
             }
             if(this.timeSignatureEvent === undefined){
-                this.timeSignatureEvent = createMidiEvent(0, sequencer.TIME_SIGNATURE, this.nominator, this.denominator);
+                this.timeSignatureEvent = createMidiEvent(0, sequencerModule.TIME_SIGNATURE, this.nominator, this.denominator);
                 this.timeEvents.unshift(this.timeSignatureEvent);
             }else{
                 this.nominator = this.timeSignatureEvent.nominator;
@@ -15733,8 +15740,8 @@
             //console.log(1, this.nominator, this.denominator, this.bpm);
         }else{
             // there has to be a tempo and time signature event at ticks 0, otherwise the position can't be calculated, and moreover, it is dictated by the MIDI standard
-            this.tempoEvent = createMidiEvent(0, sequencer.TEMPO, this.bpm);
-            this.timeSignatureEvent = createMidiEvent(0, sequencer.TIME_SIGNATURE, this.nominator, this.denominator);
+            this.tempoEvent = createMidiEvent(0, sequencerModule.TEMPO, this.bpm);
+            this.timeSignatureEvent = createMidiEvent(0, sequencerModule.TIME_SIGNATURE, this.nominator, this.denominator);
             this.timeEvents = [
                 this.tempoEvent,
                 this.timeSignatureEvent
@@ -15811,7 +15818,7 @@
 
 
         if(config.className === 'MidiFile' && config.loaded === false){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('midifile', config.name, 'has not yet been loaded!');
             }
         }
@@ -15835,9 +15842,9 @@
             if(config.bars === undefined){
                 this.lastBar = 0;
             }
-            this.lastEvent = createMidiEvent([this.lastBar, sequencer.END_OF_TRACK]);
+            this.lastEvent = createMidiEvent([this.lastBar, sequencerModule.END_OF_TRACK]);
         }else{
-            this.lastEvent = createMidiEvent([this.bars * this.ticksPerBar, sequencer.END_OF_TRACK]);
+            this.lastEvent = createMidiEvent([this.bars * this.ticksPerBar, sequencerModule.END_OF_TRACK]);
         }
         //console.log('update');
         this.update(true);
@@ -16044,7 +16051,7 @@
     pulse = function(song){
         var
             //now = window.performance.now(),
-            now = sequencer.getTime() * 1000,
+            now = sequencerModule.getTime() * 1000,
             diff = now - song.timeStamp,
             millis = song.millis + diff;
 
@@ -16094,7 +16101,7 @@
 
         song.jump = false;
 
-        //console.log(now, sequencer.getTime());
+        //console.log(now, sequencerModule.getTime());
         //console.log(song.barsAsString);
         //console.log('pulse', song.playhead.barsAsString, song.playhead.millis);
         //console.log(song.millis);
@@ -16102,13 +16109,13 @@
 
 
     Song.prototype.remove = function() {
-        console.warn('Song.remove() is deprecated, please use sequencer.deleteSong()');
-        sequencer.deleteSong(this);
+        console.warn('Song.remove() is deprecated, please use sequencerModule.deleteSong()');
+        sequencerModule.deleteSong(this);
     };
 
 
     Song.prototype.play = function() {
-        sequencer.unlockWebAudio();
+        sequencerModule.unlockWebAudio();
         var song, playstart;
 
         //console.log(this.playing);
@@ -16129,13 +16136,13 @@
             this.scheduler.setIndex(0);
         }
         // timeStamp is used for calculating the diff in time of every consecutive frame
-        this.timeStamp = sequencer.getTime() * 1000;
+        this.timeStamp = sequencerModule.getTime() * 1000;
         this.startTime = this.timeStamp;
         try{
             this.startTime2 = window.performance.now();
             //this.startTime2 = undefined;
         }catch(e){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('window.performance.now() not supported');
             }
         }
@@ -16154,14 +16161,14 @@
             //console.log(this.startTime, playstart, this.recordTimestamp/1000 - playstart);
 
             repetitiveTasks.playAfterPrecount = function(){
-                if(sequencer.getTime() >= playstart){
+                if(sequencerModule.getTime() >= playstart){
                     song.precounting = false;
                     song.prerolling = false;
                     song.recording = true;
                     song.playing = true;
                     dispatchEvent(song, 'record_start');
                     dispatchEvent(song, 'play');
-                    //console.log('playAfterPrecount', sequencer.getTime(), playstart, song.metronome.precountDurationInMillis);
+                    //console.log('playAfterPrecount', sequencerModule.getTime(), playstart, song.metronome.precountDurationInMillis);
                     repetitiveTasks.playAfterPrecount = undefined;
                     delete repetitiveTasks.playAfterPrecount;
                 }
@@ -16491,7 +16498,7 @@
             if(value === undefined){
                 value = track.quantizeValue;
             }
-            sequencer.quantize(track.events, value, this.ppq, historyObject);
+            sequencerModule.quantize(track.events, value, this.ppq, historyObject);
         }
 
         return historyObject;
@@ -16501,7 +16508,7 @@
 
     Song.prototype.undoQuantize = function(history){
         if(history === undefined){
-            if(sequencer.debug >= 2){
+            if(sequencerModule.debug >= 2){
                 console.warn('please pass a quantize history object');
             }
             return;
@@ -16580,7 +16587,7 @@
         }else if(flag === true || flag === false){
             this.loop = flag;
         }else{
-            if(sequencer.debug >= 1){
+            if(sequencerModule.debug >= 1){
                 console.error('pass "true", "false" or no value');
             }
             return;
@@ -16594,13 +16601,13 @@
         this.jump = true;
         this.scheduler.looped = false;
         this.scheduler.firstRun = true;
-        this.timeStamp = sequencer.getTime() * 1000;
+        this.timeStamp = sequencerModule.getTime() * 1000;
         this.startTime = this.timeStamp;
         try{
             this.startTime2 = window.performance.now();
             //this.startTime2 = undefined;
         }catch(e){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.log('window.performance.now() not supported');
             }
         }
@@ -16635,7 +16642,7 @@
 
         track = this.tracks[0];
         if(track === undefined){
-            track = sequencer.createTrack();
+            track = sequencerModule.createTrack();
             this.addTrack(track);
         }
         // we need to find the first part on the track, so update the track if necessary
@@ -16645,7 +16652,7 @@
 
         part = track.parts[0];
         if(part === undefined){
-            part = sequencer.createPart();
+            part = sequencerModule.createPart();
             track.addPart(part);
         }
         part.addEvents.apply(part, arguments);
@@ -16658,7 +16665,7 @@
         var track = this.tracks[0];
         if(track === undefined){
             //console.log('-> create track for parts')
-            track = sequencer.createTrack();
+            track = sequencerModule.createTrack();
             this.addTrack(track);
         }
         //console.log(arguments);
@@ -16863,14 +16870,14 @@
 
 
     Song.prototype.updateTempoEvent = function(event, bpm){
-        if(event.type !== sequencer.TEMPO){
-            if(sequencer.debug >= 4){
+        if(event.type !== sequencerModule.TEMPO){
+            if(sequencerModule.debug >= 4){
                 console.error('this is not a tempo event');
             }
             return;
         }
         if(event.song !== this){
-            if(sequencer.debug >= 4){
+            if(sequencerModule.debug >= 4){
                 console.error('this event has not been added to this song yet');
             }
             return;
@@ -16884,14 +16891,14 @@
 
 
     Song.prototype.updateTimeSignatureEvent = function(event, nominator, denominator){
-        if(event.type !== sequencer.TIME_SIGNATURE){
-            if(sequencer.debug >= 4){
+        if(event.type !== sequencerModule.TIME_SIGNATURE){
+            if(sequencerModule.debug >= 4){
                 console.error('this is not a time signature event');
             }
             return;
         }
         if(event.song !== this){
-            if(sequencer.debug >= 4){
+            if(sequencerModule.debug >= 4){
                 console.error('this event has not been added to this song yet');
             }
             return;
@@ -16906,12 +16913,12 @@
 
 
     Song.prototype.getTempoEvents = function(){
-        return getTimeEvents(sequencer.TEMPO, this);
+        return getTimeEvents(sequencerModule.TEMPO, this);
     };
 
 
     Song.prototype.getTimeSignatureEvents = function(){
-        return getTimeEvents(sequencer.TIME_SIGNATURE, this);
+        return getTimeEvents(sequencerModule.TIME_SIGNATURE, this);
     };
 
 
@@ -16984,7 +16991,7 @@
 
 
     Song.prototype.setTempo = function(bpm, update){
-        var timeEvents = getTimeEvents(sequencer.TEMPO, this),
+        var timeEvents = getTimeEvents(sequencerModule.TEMPO, this),
             i, event,
             ticks = this.ticks,
             percentage = this.percentage,
@@ -17006,7 +17013,7 @@
 
 
     Song.prototype.setTimeSignature = function(nominator, denominator, update){
-        var timeEvents = getTimeEvents(sequencer.TIME_SIGNATURE, this),
+        var timeEvents = getTimeEvents(sequencerModule.TIME_SIGNATURE, this),
             i, event,
             percentage = this.percentage,
             ticks = this.ticks;
@@ -17030,7 +17037,7 @@
 
 
     Song.prototype.resetTempo = function(bpm){
-        var firstTempoEvent = getTimeEvents(sequencer.TEMPO, this)[0],
+        var firstTempoEvent = getTimeEvents(sequencerModule.TEMPO, this)[0],
             timeEvents = this.timeEvents;
 
         firstTempoEvent.bpm = bpm;
@@ -17048,7 +17055,7 @@
 
 
     Song.prototype.resetTimeSignature = function(nominator, denominator){
-        var firstTimeSignatureEvent = getTimeEvents(sequencer.TIME_SIGNATURE, this)[0],
+        var firstTimeSignatureEvent = getTimeEvents(sequencerModule.TIME_SIGNATURE, this)[0],
             timeEvents = this.timeEvents,
             ticks = this.ticks;
 
@@ -17078,9 +17085,9 @@
         for(i = events.length - 1; i >= 0; i--){
             event = events[i];
             if(event.className === 'MidiEvent'){
-                if(event.type === sequencer.TEMPO){
+                if(event.type === sequencerModule.TEMPO){
                     this.timeEvents.push(event);
-                }else if(event.type === sequencer.TIME_SIGNATURE){
+                }else if(event.type === sequencerModule.TIME_SIGNATURE){
                     /*
                         A time signature event can only be positioned at the beginning of a bar,
                         so we look for the nearest bar and put the event there.
@@ -17403,7 +17410,7 @@
 
 
     Song.prototype.resetExternalMidiDevices = function(){
-        //var time = this.millis + (sequencer.bufferTime * 1000); // this doesn't work, why? -> because the scheduler uses a different time
+        //var time = this.millis + (sequencerModule.bufferTime * 1000); // this doesn't work, why? -> because the scheduler uses a different time
         var time = this.scheduler.lastEventTime + 100;
         if(isNaN(time)){
             time  = 100;
@@ -17413,7 +17420,7 @@
             //console.log(output);
             output.send([0xB0, 0x7B, 0x00], time); // stop all notes
             output.send([0xB0, 0x79, 0x00], time); // reset all controllers
-            //output.send([176, 123, 0], sequencer.getTime());
+            //output.send([176, 123, 0], sequencerModule.getTime());
         });
     };
 
@@ -17469,69 +17476,69 @@
 */
     };
 
-    //sequencer.Song = Song;
+    //sequencerModule.Song = Song;
 
-    sequencer.createSong = function(config){
+    sequencerModule.createSong = function(config){
         return new Song(config);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        context = sequencer.protectedScope.context;
-        timedTasks = sequencer.protectedScope.timedTasks;
-        repetitiveTasks = sequencer.protectedScope.repetitiveTasks;
-        masterGainNode = sequencer.protectedScope.masterGainNode;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        context = sequencerModule.protectedScope.context;
+        timedTasks = sequencerModule.protectedScope.timedTasks;
+        repetitiveTasks = sequencerModule.protectedScope.repetitiveTasks;
+        masterGainNode = sequencerModule.protectedScope.masterGainNode;
 
-        createMidiEvent = sequencer.createMidiEvent;
-        createGrid = sequencer.protectedScope.createGrid;
+        createMidiEvent = sequencerModule.createMidiEvent;
+        createGrid = sequencerModule.protectedScope.createGrid;
 
-        initMidi = sequencer.protectedScope.initMidiSong;
-        setMidiInput = sequencer.protectedScope.setMidiInputSong;
-        setMidiOutput = sequencer.protectedScope.setMidiOutputSong;
-        getMidiInputs = sequencer.protectedScope.getMidiInputs;
-        getMidiOutputs = sequencer.protectedScope.getMidiOutputs;
-        addMidiEventListener = sequencer.protectedScope.addMidiEventListener;
-        getMidiPortsAsDropdown = sequencer.protectedScope.getMidiPortsAsDropdown;
-        removeMidiEventListener = sequencer.protectedScope.removeMidiEventListener;
+        initMidi = sequencerModule.protectedScope.initMidiSong;
+        setMidiInput = sequencerModule.protectedScope.setMidiInputSong;
+        setMidiOutput = sequencerModule.protectedScope.setMidiOutputSong;
+        getMidiInputs = sequencerModule.protectedScope.getMidiInputs;
+        getMidiOutputs = sequencerModule.protectedScope.getMidiOutputs;
+        addMidiEventListener = sequencerModule.protectedScope.addMidiEventListener;
+        getMidiPortsAsDropdown = sequencerModule.protectedScope.getMidiPortsAsDropdown;
+        removeMidiEventListener = sequencerModule.protectedScope.removeMidiEventListener;
 
-        getPosition = sequencer.protectedScope.getPosition;
-        millisToTicks = sequencer.protectedScope.millisToTicks;
-        ticksToMillis = sequencer.protectedScope.ticksToMillis;
-        ticksToBars = sequencer.protectedScope.ticksToBars;
-        millisToBars = sequencer.protectedScope.millisToBars;
-        barsToTicks = sequencer.protectedScope.barsToTicks;
-        barsToMillis = sequencer.protectedScope.barsToMillis;
+        getPosition = sequencerModule.protectedScope.getPosition;
+        millisToTicks = sequencerModule.protectedScope.millisToTicks;
+        ticksToMillis = sequencerModule.protectedScope.ticksToMillis;
+        ticksToBars = sequencerModule.protectedScope.ticksToBars;
+        millisToBars = sequencerModule.protectedScope.millisToBars;
+        barsToTicks = sequencerModule.protectedScope.barsToTicks;
+        barsToMillis = sequencerModule.protectedScope.barsToMillis;
 
-        typeString = sequencer.protectedScope.typeString;
-        removeFromArray = sequencer.protectedScope.removeFromArray;
-        removeFromArray2 = sequencer.protectedScope.removeFromArray2;
-        findEvent = sequencer.findEvent;
-        findNote = sequencer.findNote;
-        getStats = sequencer.getStats;
+        typeString = sequencerModule.protectedScope.typeString;
+        removeFromArray = sequencerModule.protectedScope.removeFromArray;
+        removeFromArray2 = sequencerModule.protectedScope.removeFromArray2;
+        findEvent = sequencerModule.findEvent;
+        findNote = sequencerModule.findNote;
+        getStats = sequencerModule.getStats;
 
-        gridToSong = sequencer.gridToSong;
-        noteToGrid = sequencer.noteToGrid;
-        eventToGrid = sequencer.eventToGrid;
-        positionToGrid = sequencer.positionToGrid;
+        gridToSong = sequencerModule.gridToSong;
+        noteToGrid = sequencerModule.noteToGrid;
+        eventToGrid = sequencerModule.eventToGrid;
+        positionToGrid = sequencerModule.positionToGrid;
 
-        getArguments = sequencer.protectedScope.getArguments;
-        objectForEach = sequencer.protectedScope.objectForEach;
-        getNoteLengthName = sequencer.protectedScope.getNoteLengthName;
+        getArguments = sequencerModule.protectedScope.getArguments;
+        objectForEach = sequencerModule.protectedScope.objectForEach;
+        getNoteLengthName = sequencerModule.protectedScope.getNoteLengthName;
 
-        update = sequencer.protectedScope.update;
-        checkDuration = sequencer.protectedScope.checkDuration;
-        addMetronomeEvents = sequencer.protectedScope.addMetronomeEvents;
+        update = sequencerModule.protectedScope.update;
+        checkDuration = sequencerModule.protectedScope.checkDuration;
+        addMetronomeEvents = sequencerModule.protectedScope.addMetronomeEvents;
 
-        followEvent = sequencer.protectedScope.followEvent;
-        createPlayhead = sequencer.protectedScope.createPlayhead;
-        createScheduler = sequencer.protectedScope.createScheduler;
-        createFollowEvent = sequencer.protectedScope.createFollowEvent;
-        createMetronome = sequencer.protectedScope.createMetronome;
+        followEvent = sequencerModule.protectedScope.followEvent;
+        createPlayhead = sequencerModule.protectedScope.createPlayhead;
+        createScheduler = sequencerModule.protectedScope.createScheduler;
+        createFollowEvent = sequencerModule.protectedScope.createFollowEvent;
+        createMetronome = sequencerModule.protectedScope.createMetronome;
 
-        addEventListener = sequencer.protectedScope.songAddEventListener;
-        removeEventListener = sequencer.protectedScope.songRemoveEventListener;
-        dispatchEvent = sequencer.protectedScope.songDispatchEvent;
-        addSong = sequencer.protectedScope.addSong;
+        addEventListener = sequencerModule.protectedScope.songAddEventListener;
+        removeEventListener = sequencerModule.protectedScope.songRemoveEventListener;
+        dispatchEvent = sequencerModule.protectedScope.songDispatchEvent;
+        addSong = sequencerModule.protectedScope.addSong;
     });
 
 }());
@@ -17694,12 +17701,12 @@
     };
 
 
-    sequencer.protectedScope.songAddEventListener = addEventListener;
-    sequencer.protectedScope.songRemoveEventListener = removeEventListener;
-    sequencer.protectedScope.songDispatchEvent = dispatchEvent;
+    sequencerModule.protectedScope.songAddEventListener = addEventListener;
+    sequencerModule.protectedScope.songRemoveEventListener = removeEventListener;
+    sequencerModule.protectedScope.songDispatchEvent = dispatchEvent;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
     });
 
 }());(function(){
@@ -18620,11 +18627,11 @@
 /*
                         if(type === 'note'){
                             console.log(event);
-                            if(event.type === sequencer.NOTE_ON){
+                            if(event.type === sequencerModule.NOTE_ON){
                                 eventId = event.midiNote.noteOff.id;
                                 tmp = allListenersByType.event[subtype][eventId];
                                 listenerIds = listenerIds.concat(tmp);
-                            }else if(event.type === sequencer.NOTE_OFF){
+                            }else if(event.type === sequencerModule.NOTE_OFF){
                                 eventId = event.midiNote.noteOn.id;
                                 tmp = allListenersByType.event[subtype][eventId];
                                 listenerIds = listenerIds.concat(tmp);
@@ -18856,17 +18863,17 @@
     };
 
 
-    sequencer.protectedScope.createFollowEvent = function(song){
+    sequencerModule.protectedScope.createFollowEvent = function(song){
         return new FollowEvent(song);
     };
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        typeString = sequencer.protectedScope.typeString;
-        getPosition = sequencer.protectedScope.getPosition;
-        midiEventNumberByName = sequencer.midiEventNumberByName;
-        midiEventNameByNumber = sequencer.midiEventNameByNumber;
-        findEvent = sequencer.findEvent;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        typeString = sequencerModule.protectedScope.typeString;
+        getPosition = sequencerModule.protectedScope.getPosition;
+        midiEventNumberByName = sequencerModule.midiEventNumberByName;
+        midiEventNameByNumber = sequencerModule.midiEventNameByNumber;
+        findEvent = sequencerModule.findEvent;
     });
 }());(function(){
 
@@ -18960,7 +18967,7 @@
     //note = song.highestNote - round((y/height) * song.numNotes);
 
     position = getPosition(song,['ticks',ticks]);
-    note = sequencer.createNote(note);
+    note = sequencerModule.createNote(note);
 
     //console.log(position,note);
 
@@ -18971,20 +18978,20 @@
   };
 
   //[song],x,y,width,height
-  sequencer.positionToSong = sequencer.coordinatesToPosition = sequencer.gridToSong = function(){
+  sequencerModule.positionToSong = sequencerModule.coordinatesToPosition = sequencerModule.gridToSong = function(){
     var args = Array.prototype.slice.call(arguments),
       numArgs = args.length,
       arg0 = args[0];
 
     //todo: add error messages here
     if(numArgs === 4 && arg0.className !== 'Song'){
-      return positionToSong(sequencer.getSong(), arg0, args[1], args[2], args[3]);
+      return positionToSong(sequencerModule.getSong(), arg0, args[1], args[2], args[3]);
     }
     return positionToSong(arg0, args[1], args[2], args[3], args[4]);
   };
 
 
-  sequencer.songToGrid = function(){
+  sequencerModule.songToGrid = function(){
     var args = Array.prototype.slice.call(arguments),
       numArgs = args.length,
       arg0 = args[0],
@@ -19013,18 +19020,18 @@
 
   eventToGrid = function(event, width, height, song){
     if(song === undefined){
-      song = sequencer.getSong();
+      song = sequencerModule.getSong();
     }
 
-    if(event.type !== sequencer.NOTE_ON && event.type !== sequencer.NOTE_OFF){
+    if(event.type !== sequencerModule.NOTE_ON && event.type !== sequencerModule.NOTE_OFF){
       console.error('please provide a NOTE_ON or a NOTE_OFF event');
       return null;
     }
 
     var x = (event.millis/song.durationMillis) * width,
       y,
-      note = sequencer.createNote(event.noteNumber);
-      //position = sequencer.createPosition('ticks', event.ticks);
+      note = sequencerModule.createNote(event.noteNumber);
+      //position = sequencerModule.createPosition('ticks', event.ticks);
 
     return {
       x: positionToGrid(['ticks', event.ticks],width,song),
@@ -19035,7 +19042,7 @@
 
   positionToGrid = function(position, width, song){
     if(song === undefined){
-      song = sequencer.getSong();
+      song = sequencerModule.getSong();
     }
 
     if(typeString(position) === 'array' || position.type !== 'ticks'){
@@ -19054,7 +19061,7 @@
 
   noteToGrid = function(note, height, song){
     if(song === undefined){
-      song = sequencer.getSong();
+      song = sequencerModule.getSong();
     }
 
     var noteNumber = note.number,
@@ -19074,15 +19081,15 @@
 
   // should this be added to sequencer publically? -> no, add to song
 /*
-  sequencer.positionToGrid = positionToGrid;
-  sequencer.eventToGrid = eventToGrid;
-  sequencer.noteToGrid = noteToGrid;
+  sequencerModule.positionToGrid = positionToGrid;
+  sequencerModule.eventToGrid = eventToGrid;
+  sequencerModule.noteToGrid = noteToGrid;
 */
-  sequencer.protectedScope.addInitMethod(function(){
-    getPosition = sequencer.protectedScope.getPosition;
-    floor = sequencer.protectedScope.floor;
-    round = sequencer.protectedScope.round;
-    typeString = sequencer.protectedScope.typeString;
+  sequencerModule.protectedScope.addInitMethod(function(){
+    getPosition = sequencerModule.protectedScope.getPosition;
+    floor = sequencerModule.protectedScope.floor;
+    round = sequencerModule.protectedScope.round;
+    typeString = sequencerModule.protectedScope.typeString;
   });
 
 }());
@@ -19110,7 +19117,7 @@
 
     update = function(song, updateTimeEvents){
 
-        if(sequencer.playing === true){
+        if(sequencerModule.playing === true){
             scheduledTasks.updateSong = function(){
                 update2(song, updateTimeEvents);
             };
@@ -19583,8 +19590,8 @@
             note = notes[i];
             //console.log(note);
             if(note.endless === true){
-                note.durationTicks = sequencer.ticks - note.noteOn.ticks;
-                note.durationMillis = sequencer.millis - note.noteOn.millis;
+                note.durationTicks = sequencerModule.ticks - note.noteOn.ticks;
+                note.durationMillis = sequencerModule.millis - note.noteOn.millis;
             } else {
                 note.durationTicks = note.noteOff.ticks - note.noteOn.ticks;
                 note.durationMillis = note.noteOff.millis - note.noteOn.millis;
@@ -19622,7 +19629,7 @@
             position = playhead.update('millis', time - totalTime); // update by supplying the diff in millis
             totalTime = time;
 
-            timeData = sequencer.getNiceTime(position.millis);
+            timeData = sequencerModule.getNiceTime(position.millis);
 
             //console.log(event.ticks, position.ticks);
             //console.log(event.recordMillis, event.recordMillis - timestamp);
@@ -19740,16 +19747,16 @@
     }
 
 
-    sequencer.protectedScope.update = update;
-    sequencer.protectedScope.checkDuration = checkDuration;
-    sequencer.protectedScope.parseMetronomeEvents = parseMetronomeEvents;
+    sequencerModule.protectedScope.update = update;
+    sequencerModule.protectedScope.checkDuration = checkDuration;
+    sequencerModule.protectedScope.parseMetronomeEvents = parseMetronomeEvents;
 
-    sequencer.protectedScope.addInitMethod(function(){
-        getPosition = sequencer.protectedScope.getPosition;
-        parseEvents = sequencer.protectedScope.parseEvents;
-        parseTimeEvents = sequencer.protectedScope.parseTimeEvents;
-        getInstrument = sequencer.protectedScope.getInstrument;
-        scheduledTasks = sequencer.protectedScope.scheduledTasks;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        getPosition = sequencerModule.protectedScope.getPosition;
+        parseEvents = sequencerModule.protectedScope.parseEvents;
+        parseTimeEvents = sequencerModule.protectedScope.parseTimeEvents;
+        getInstrument = sequencerModule.protectedScope.getInstrument;
+        scheduledTasks = sequencerModule.protectedScope.scheduledTasks;
     });
 
 }());
@@ -19771,7 +19778,7 @@
         // satisfy jslint
         sequencer = window.sequencer,
         console = window.console,
-        debug = sequencer.debug,
+        debug = sequencerModule.debug,
 
         slice = Array.prototype.slice,
 
@@ -20591,7 +20598,7 @@
     };
 
     // Track.prototype.addEvents = function(){
-    //     var part = sequencer.createPart();
+    //     var part = sequencerModule.createPart();
     //     part.addEvents(arguments);
     //     this.addPart(part);
     // };
@@ -20923,11 +20930,11 @@
 
     Track.prototype.setVolume = function (value) {
         if (isNaN(value)) {
-            if (sequencer.debug >= 1) {
+            if (sequencerModule.debug >= 1) {
                 console.error('please pass a number');
             }
         } else if (value < 0 || value > 1) {
-            if (sequencer.debug >= 1) {
+            if (sequencerModule.debug >= 1) {
                 console.error('please pass a float between 0 and 1');
             }
         } else {
@@ -20963,13 +20970,13 @@
     function getDefaultInstrumentConfig(track) {
         var config;
         if (track.song !== undefined && track.song.defaultInstrument !== undefined) {
-            config = findItem(track.song.defaultInstrument, sequencer.storage.instruments);
+            config = findItem(track.song.defaultInstrument, sequencerModule.storage.instruments);
             //console.log('default instrument song', track.song.defaultInstrument);
         }
         if (config === false || config === undefined) {
-            config = findItem(sequencer.defaultInstrument, sequencer.storage.instruments);
-            //console.log('default instrument sequencer', sequencer.defaultInstrument, config);
-            //console.log(sequencer.storage.instruments.heartbeat.sinewave);
+            config = findItem(sequencerModule.defaultInstrument, sequencerModule.storage.instruments);
+            //console.log('default instrument sequencer', sequencerModule.defaultInstrument, config);
+            //console.log(sequencerModule.storage.instruments.heartbeat.sinewave);
         }
         return config;
     }
@@ -21022,7 +21029,7 @@
         flag = flag === undefined ? true : flag;
 
         if (id === 'all') {
-            availableInputs = this.song !== undefined ? this.song.midiInputs : sequencer.midiInputs;
+            availableInputs = this.song !== undefined ? this.song.midiInputs : sequencerModule.midiInputs;
             objectForEach(availableInputs, function (value, key) {
                 if (flag === true) {
                     midiInputs[key] = value;
@@ -21030,7 +21037,7 @@
                     delete midiInputs[key];
                 }
             });
-            //console.log(sequencer.midiInputs, this.midiInputs, midiInputs);
+            //console.log(sequencerModule.midiInputs, this.midiInputs, midiInputs);
             return;
         }
 
@@ -21092,7 +21099,7 @@
         if (this.recordEnabled !== 'midi' && this.recordEnabled !== 'audio') {
             return;
         }
-        this.recordPart = sequencer.createPart();
+        this.recordPart = sequencerModule.createPart();
         this.addPart(this.recordPart);
         //console.log(this.recordPart.needsUpdate);
         this.recordingNotes = {};
@@ -21129,7 +21136,7 @@
             var scope = this;
             this.audio.stopRecording(function (recording) {
 
-                var event = sequencer.createAudioEvent({
+                var event = sequencerModule.createAudioEvent({
                     ticks: scope.song.recordTimestampTicks,
                     buffer: recording.audioBuffer,
                     sampleId: recording.id,
@@ -21177,12 +21184,12 @@
             return;
         }
         if (recordId === undefined) {
-            if (sequencer.debug >= sequencer.WARN) {
+            if (sequencerModule.debug >= sequencerModule.WARN) {
                 console.warn('please provide a recording id');
             }
             return false;
         }
-        return sequencer.storage.audio.recordings[recordId];
+        return sequencerModule.storage.audio.recordings[recordId];
     };
 
 
@@ -21191,7 +21198,7 @@
             return;
         }
         if (recordId === undefined) {
-            if (sequencer.debug >= sequencer.WARN) {
+            if (sequencerModule.debug >= sequencerModule.WARN) {
                 console.warn('please provide a recording id');
             }
             if (callback) {
@@ -21200,7 +21207,7 @@
             return;
         }
 
-        var recording = sequencer.storage.audio.recordings[recordId];
+        var recording = sequencerModule.storage.audio.recordings[recordId];
         encodeAudio(recording.audioBuffer, type, bitrate, function (mp3Data) {
             recording.mp3 = mp3Data;
             callback(recording);
@@ -21210,7 +21217,7 @@
 
     Track.prototype.setAudioRecordingLatency = function (recordId, value, callback) {
         if (this.audio !== undefined) {
-            //console.log(recordId, sequencer.storage.audio.recordings);
+            //console.log(recordId, sequencerModule.storage.audio.recordings);
             this.audio.setAudioRecordingLatency(recordId, value, function (recording) {
                 // update all audio events in this song that use this recording
 
@@ -21238,7 +21245,7 @@
 
     Track.prototype.quantizeRecording = function (value) {
         value = value || this.quantizeValue;
-        return sequencer.quantize(this.recordPart.events, value, this.song.ppq);
+        return sequencerModule.quantize(this.recordPart.events, value, this.song.ppq);
     };
 
 
@@ -21270,13 +21277,13 @@
         }
 
         //console.log(value, history);
-        return sequencer.quantize(this.events, value, this.song.ppq, history); // sequencer.quantize is defined in quantize_fixed-length.js
+        return sequencerModule.quantize(this.events, value, this.song.ppq, history); // sequencerModule.quantize is defined in quantize_fixed-length.js
     };
 
 
     Track.prototype.undoQuantize = function (history) {
         if (history === undefined) {
-            if (sequencer.debug >= 2) {
+            if (sequencerModule.debug >= 2) {
                 console.warn('please pass a quantize history object');
             }
             return;
@@ -21320,9 +21327,9 @@
 
     /*
         Track.prototype.addReverb = function(id, amount){
-            var reverb = sequencer.getReverb(id);
+            var reverb = sequencerModule.getReverb(id);
             if(reverb !== false){
-                reverb = sequencer.createEffect('reverb', reverb);
+                reverb = sequencerModule.createEffect('reverb', reverb);
                 reverb.amount = amount < 0 ? 0 : amount > 1 ? 1 : 0.5;
                 this.effects.push(reverb);
             }
@@ -21337,31 +21344,31 @@
         };
     */
 
-    sequencer.protectedScope.Track = Track;
+    sequencerModule.protectedScope.Track = Track;
 
-    sequencer.createTrack = function (name, type, song) {
+    sequencerModule.createTrack = function (name, type, song) {
         return new Track(name, type, song);
     };
 
-    sequencer.protectedScope.addInitMethod(function () {
+    sequencerModule.protectedScope.addInitMethod(function () {
         // get the protected scope with all added methods
-        var protectedScope = sequencer.protectedScope;
+        var protectedScope = sequencerModule.protectedScope;
 
-        getStats = sequencer.getStats;
-        findEvent = sequencer.findEvent;
-        findNote = sequencer.findNote;
-        createPart = sequencer.createPart;
-        createMidiEvent = sequencer.createMidiEvent;
-        createMidiNote = sequencer.createMidiNote;
-        createInstrument = sequencer.createInstrument;
-        createPanner = sequencer.createPanner;
-        encodeAudio = sequencer.encodeAudio;
+        getStats = sequencerModule.getStats;
+        findEvent = sequencerModule.findEvent;
+        findNote = sequencerModule.findNote;
+        createPart = sequencerModule.createPart;
+        createMidiEvent = sequencerModule.createMidiEvent;
+        createMidiNote = sequencerModule.createMidiNote;
+        createInstrument = sequencerModule.createInstrument;
+        createPanner = sequencerModule.createPanner;
+        encodeAudio = sequencerModule.encodeAudio;
 
         context = protectedScope.context;
         findItem = protectedScope.findItem;
         addMidiEventListener = protectedScope.addMidiEventListener;
         removeMidiEventListener = protectedScope.removeMidiEventListener;
-        createAudioTrack = sequencer.protectedScope.createAudioTrack;
+        createAudioTrack = sequencerModule.protectedScope.createAudioTrack;
         checkPosition = protectedScope.checkPosition;
         objectForEach = protectedScope.objectForEach;
         typeString = protectedScope.typeString;
@@ -21721,9 +21728,9 @@
             //fileSize = round(request.getResponseHeader('Content-Length')/1024/1024, 2);
             //console.log(fileSize);
             //console.log(config.url, request.getResponseHeader('Content-Length'));
-            //console.log(sequencer.os, request.response);
+            //console.log(sequencerModule.os, request.response);
 
-            //if(sequencer.os === 'ios' && config.responseType === 'json'){
+            //if(sequencerModule.os === 'ios' && config.responseType === 'json'){
             if(config.responseType === 'json'){
                 //fileSize = round(request.response.length/1024/1024, 2);
                 fileSize = request.response.length;
@@ -21761,7 +21768,7 @@
             //console.log(config.responseType, config.url);
             //request.setRequestHeader('Content-type', 'application/' + config.responseType);
 
-            //if(sequencer.os === 'ios' && config.responseType === 'json'){
+            //if(sequencerModule.os === 'ios' && config.responseType === 'json'){
             if(config.responseType === 'json'){
                 request.responseType = 'text';
             }else{
@@ -21844,7 +21851,7 @@
             items = [];
 
         if(numFolders === 0){
-            // return all items in root folder (for instance sequencer.storage.midi)
+            // return all items in root folder (for instance sequencerModule.storage.midi)
             loop3(root, items, search_subfolders, '.');
         }else{
             currentFolder = root;
@@ -22587,7 +22594,7 @@
         //console.log(config);
 
         config = config || {};
-        ppq = config.ppq || sequencer.defaultPPQ;
+        ppq = config.ppq || sequencerModule.defaultPPQ;
         numNotes = config.numNotes || 20;
         noteLength = config.noteLength || ppq/2; // ticks
         minVelocity = config.minVelocity || 30;
@@ -22608,11 +22615,11 @@
 
             //console.log(ticks, noteNumber, velocity);
 
-            midiEvent = sequencer.createMidiEvent(ticks, sequencer.NOTE_ON, noteNumber, velocity);
+            midiEvent = sequencerModule.createMidiEvent(ticks, sequencerModule.NOTE_ON, noteNumber, velocity);
             events.push(midiEvent);
             ticks += noteLength;
 
-            midiEvent = sequencer.createMidiEvent(ticks, sequencer.NOTE_OFF, noteNumber, 0);
+            midiEvent = sequencerModule.createMidiEvent(ticks, sequencerModule.NOTE_OFF, noteNumber, 0);
             events.push(midiEvent);
             ticks += ppq - noteLength;
         }
@@ -22629,7 +22636,7 @@
             i, event;
 
         if(isNaN(oldPPQ) || isNaN(newPPQ)){
-            if(sequencer.debug === 4){
+            if(sequencerModule.debug === 4){
                 console.error('PPQ values must be numbers');
             }
             return;
@@ -22994,76 +23001,76 @@
 
     }
 
-    sequencer.protectedScope.addInitMethod(function(){
-        context = sequencer.protectedScope.context;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        context = sequencerModule.protectedScope.context;
     });
 
     // mozilla tools
-    sequencer.util.b64ToUint6 = b64ToUint6;
-    sequencer.util.base64DecToArr = base64DecToArr;
-    sequencer.util.uint6ToB64 = uint6ToB64;
-    sequencer.util.base64EncArr = base64EncArr;
-    sequencer.util.UTF8ArrToStr = UTF8ArrToStr;
-    sequencer.util.strToUTF8Arr = strToUTF8Arr;
-    sequencer.util.ajax = ajax;
-    sequencer.util.ajax2 = ajax2;
-    sequencer.util.parseSamples = parseSamples;
+    sequencerModule.util.b64ToUint6 = b64ToUint6;
+    sequencerModule.util.base64DecToArr = base64DecToArr;
+    sequencerModule.util.uint6ToB64 = uint6ToB64;
+    sequencerModule.util.base64EncArr = base64EncArr;
+    sequencerModule.util.UTF8ArrToStr = UTF8ArrToStr;
+    sequencerModule.util.strToUTF8Arr = strToUTF8Arr;
+    sequencerModule.util.ajax = ajax;
+    sequencerModule.util.ajax2 = ajax2;
+    sequencerModule.util.parseSamples = parseSamples;
 
 
-    //sequencer.findItem = findItem;
-    //sequencer.storeItem = storeItem;
+    //sequencerModule.findItem = findItem;
+    //sequencerModule.storeItem = storeItem;
 
-    sequencer.util.round = round;
-    sequencer.util.floor = floor;
-    sequencer.util.remap = remap;
-    sequencer.util.getRandom = getRandom;
-    sequencer.util.createSlider = createSlider;
-    sequencer.util.createSlider2 = createSlider2;
-    sequencer.util.getRandomNotes = getRandomNotes;
-    sequencer.util.getEqualPowerCurve = getEqualPowerCurve;
-    sequencer.util.objectForEach = objectForEach;
-    sequencer.util.insertLink = insertLink;
-    sequencer.util.encode64 = encode64;
+    sequencerModule.util.round = round;
+    sequencerModule.util.floor = floor;
+    sequencerModule.util.remap = remap;
+    sequencerModule.util.getRandom = getRandom;
+    sequencerModule.util.createSlider = createSlider;
+    sequencerModule.util.createSlider2 = createSlider2;
+    sequencerModule.util.getRandomNotes = getRandomNotes;
+    sequencerModule.util.getEqualPowerCurve = getEqualPowerCurve;
+    sequencerModule.util.objectForEach = objectForEach;
+    sequencerModule.util.insertLink = insertLink;
+    sequencerModule.util.encode64 = encode64;
 
-    sequencer.protectedScope.getNoteLengthName = getNoteLengthName;
-    sequencer.protectedScope.toBinaryString = toBinaryString;
-    sequencer.protectedScope.base64ToBinary = base64ToBinary;
-    //sequencer.protectedScope.base64ToBinary = base64DecToArr;
-    sequencer.protectedScope.toUint8Array = toUint8Array;
-    sequencer.protectedScope.getArguments = getArguments;
-    sequencer.protectedScope.pathToArray = pathToArray;
-    sequencer.protectedScope.parseUrl = parseUrl;
-    sequencer.protectedScope.loadLoop = loadLoop;
-
-
-    sequencer.protectedScope.findItem = findItem;
-    sequencer.protectedScope.storeItem = storeItem;
-    sequencer.protectedScope.deleteItem = deleteItem;
-    sequencer.protectedScope.toBinaryString = toBinaryString;
-    sequencer.protectedScope.ajax = ajax;
-    sequencer.protectedScope.copyObject = copyObject;
-    sequencer.protectedScope.findItemsInFolder = findItemsInFolder;
+    sequencerModule.protectedScope.getNoteLengthName = getNoteLengthName;
+    sequencerModule.protectedScope.toBinaryString = toBinaryString;
+    sequencerModule.protectedScope.base64ToBinary = base64ToBinary;
+    //sequencerModule.protectedScope.base64ToBinary = base64DecToArr;
+    sequencerModule.protectedScope.toUint8Array = toUint8Array;
+    sequencerModule.protectedScope.getArguments = getArguments;
+    sequencerModule.protectedScope.pathToArray = pathToArray;
+    sequencerModule.protectedScope.parseUrl = parseUrl;
+    sequencerModule.protectedScope.loadLoop = loadLoop;
 
 
-    sequencer.convertPPQ = convertPPQ;
-    sequencer.getNiceTime = getNiceTime;
-    sequencer.protectedScope.isEmptyObject = isEmptyObject;
-    sequencer.protectedScope.objectForEach = objectForEach;
-    sequencer.protectedScope.objectToArray = objectToArray;
-    sequencer.protectedScope.arrayToObject = arrayToObject;
-    sequencer.protectedScope.createClass = createClass;
+    sequencerModule.protectedScope.findItem = findItem;
+    sequencerModule.protectedScope.storeItem = storeItem;
+    sequencerModule.protectedScope.deleteItem = deleteItem;
+    sequencerModule.protectedScope.toBinaryString = toBinaryString;
+    sequencerModule.protectedScope.ajax = ajax;
+    sequencerModule.protectedScope.copyObject = copyObject;
+    sequencerModule.protectedScope.findItemsInFolder = findItemsInFolder;
 
-    sequencer.protectedScope.clone = clone;
-    sequencer.protectedScope.round = round;
-    sequencer.protectedScope.floor = floor;
-    sequencer.protectedScope.typeString = typeString;
-    sequencer.protectedScope.copyName = copyName;
-    sequencer.protectedScope.removeFromArray = removeFromArray;
-    sequencer.protectedScope.removeFromArray2 = removeFromArray2;
-    sequencer.protectedScope.filterItemsByClassName = filterItemsByClassName;
 
-    sequencer.getMicrosecondsFromBPM = getMicrosecondsFromBPM;
-    sequencer.getWaveformData = getWaveformData;
+    sequencerModule.convertPPQ = convertPPQ;
+    sequencerModule.getNiceTime = getNiceTime;
+    sequencerModule.protectedScope.isEmptyObject = isEmptyObject;
+    sequencerModule.protectedScope.objectForEach = objectForEach;
+    sequencerModule.protectedScope.objectToArray = objectToArray;
+    sequencerModule.protectedScope.arrayToObject = arrayToObject;
+    sequencerModule.protectedScope.createClass = createClass;
+
+    sequencerModule.protectedScope.clone = clone;
+    sequencerModule.protectedScope.round = round;
+    sequencerModule.protectedScope.floor = floor;
+    sequencerModule.protectedScope.typeString = typeString;
+    sequencerModule.protectedScope.copyName = copyName;
+    sequencerModule.protectedScope.removeFromArray = removeFromArray;
+    sequencerModule.protectedScope.removeFromArray2 = removeFromArray2;
+    sequencerModule.protectedScope.filterItemsByClassName = filterItemsByClassName;
+
+    sequencerModule.getMicrosecondsFromBPM = getMicrosecondsFromBPM;
+    sequencerModule.getWaveformData = getWaveformData;
 }());(function(){
 
     'use strict';
@@ -23137,7 +23144,7 @@
 
         value = '' + value;
         value = value.toUpperCase();
-        ppq = ppq || sequencer.defaultPPQ;
+        ppq = ppq || sequencerModule.defaultPPQ;
         //console.log('quantize', value);
         if(value === 0){// pass by
             return {};
@@ -23164,7 +23171,7 @@
         //console.log('quantize', quantizeTicks);
 
         if(quantizeTicks === undefined){
-            if(sequencer.debug){
+            if(sequencerModule.debug){
                 console.warn('invalid quantize value');
             }
             return;
@@ -23218,12 +23225,12 @@
     }
 
 
-    sequencer.protectedScope.addInitMethod(function(){
-        copyObject = sequencer.protectedScope.copyObject;
+    sequencerModule.protectedScope.addInitMethod(function(){
+        copyObject = sequencerModule.protectedScope.copyObject;
     });
 
-    sequencer.quantize = quantize;
-    sequencer.fixedLength = fixedLength;
+    sequencerModule.quantize = quantize;
+    sequencerModule.fixedLength = fixedLength;
 
 }());
 
@@ -23243,14 +23250,14 @@
         emptyMp3 = '//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuOTkuNVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=';
 
 
-    sequencer.protectedScope.callInitMethods(); // defined in open_module.js
-    context = sequencer.protectedScope.context; // defined in open_module.js
-    initMidi = sequencer.protectedScope.initMidi; // defined in midi_system.js
-    base64ToBinary = sequencer.protectedScope.base64ToBinary; // defined in util.js
-    delete sequencer.protectedScope; //seal
+    sequencerModule.protectedScope.callInitMethods(); // defined in open_module.js
+    context = sequencerModule.protectedScope.context; // defined in open_module.js
+    initMidi = sequencerModule.protectedScope.initMidi; // defined in midi_system.js
+    base64ToBinary = sequencerModule.protectedScope.base64ToBinary; // defined in util.js
+    delete sequencerModule.protectedScope; //seal
 
 
-    sequencer.ready = function(cb){
+    sequencerModule.ready = function(cb){
         if(ready === true){
             cb();
         }else{
@@ -23259,7 +23266,7 @@
     };
 
 
-    sequencer.addInstrument({
+    sequencerModule.addInstrument({
         name: 'sinewave',
         folder: 'heartbeat',
         autopan: false,
@@ -23269,7 +23276,7 @@
     });
 
 
-    sequencer.addInstrument({
+    sequencerModule.addInstrument({
         name: 'metronome',
         folder: 'heartbeat',
         //release_duration: 250,
@@ -23281,11 +23288,11 @@
         }
     });
 
-    //console.log(sequencer.os, sequencer.browser);
+    //console.log(sequencerModule.os, sequencerModule.browser);
 
     // safari supports only mp3 and all other browsers support mp3 among others, so although ogg is a better format, mp3 is the best choice here to cover all browsers
     // -> but we use wav for the metronome tick to get rid of the padding at the start of a mp3 file
-    sequencer.addSamplePack({
+    sequencerModule.addSamplePack({
         name: 'metronome',
         folder: 'heartbeat',
         mapping: {
@@ -23311,7 +23318,7 @@
         }
     }
 
-    sequencer.addTask({
+    sequencerModule.addTask({
         type: 'test mp3',
         method: function(cb){
             testType(emptyMp3, 'mp3', cb);
@@ -23319,7 +23326,7 @@
         params: []
     });
 
-    sequencer.addTask({
+    sequencerModule.addTask({
         type: 'test ogg',
         method: function(cb){
             testType(emptyOgg, 'ogg', cb);
@@ -23332,7 +23339,7 @@
     }, true);
 */
 /*
-    sequencer.addTask({
+    sequencerModule.addTask({
         type: 'delay',
         method: function(cb){
             setTimeout(cb, 3000);
@@ -23340,7 +23347,7 @@
         params: []
     });
 */
-    sequencer.addTask({
+    sequencerModule.addTask({
         type: 'init midi',
         method: initMidi,
         params: []
@@ -23348,12 +23355,12 @@
         readyCallbacks.forEach(function(cb){
             cb();
         });
-        if(sequencer.debug >= 4){
+        if(sequencerModule.debug >= 4){
             var msg = 'sequencer ready, support for:';
-            if(sequencer.ogg === true){
+            if(sequencerModule.ogg === true){
                 msg +=  ' ogg';
             }
-            if(sequencer.mp3 === true){
+            if(sequencerModule.mp3 === true){
                 msg +=  ' mp3';
             }
             console.log(msg);
@@ -23361,6 +23368,6 @@
         ready = true;
     }, false); // @TODO: check this true | false
 
-    //sequencer.startTaskQueue();
+    //sequencerModule.startTaskQueue();
 
 }());

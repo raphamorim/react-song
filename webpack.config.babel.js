@@ -25,7 +25,6 @@ const config = {
         use: [
           'babel-loader'
         ],
-        include: sourcePath
       }
     ]
   },

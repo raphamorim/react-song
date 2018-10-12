@@ -62,9 +62,9 @@ window.onload = function(){
         });
 
 
-        btnStart.addEventListener('click', function(e){
+        // btnStart.addEventListener('click', function(e){
             song.play();
-        });
+        // });
 
 
         btnStop.addEventListener('click', function(e){

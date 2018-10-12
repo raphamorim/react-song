@@ -7,10 +7,11 @@
  */
 
 import reconciler from 'react-reconciler';
-import reactSongComponent from './component';
+import { createElement } from './component';
 
 const SongReconciler = reconciler({
   appendInitialChild(parentInstance, child) {
+    console.log('appendInitialChild');
     // if (parentInstance.appendChild) {
     //   parentInstance.appendChild(child);
     //   parentInstance.render(apeContextGlobal);
@@ -24,7 +25,8 @@ const SongReconciler = reconciler({
     hostContext,
     internalInstanceHandle
   ) {
-    const element = reactSongComponent.createElement(
+
+    const element = createElement(
       type,
       props,
       rootContainerInstance,
@@ -39,7 +41,9 @@ const SongReconciler = reconciler({
   },
 
   finalizeInitialChildren(element, type, props) {
-    return false;
+    if (type === 'Song') {
+      console.log(element.render());
+    }
   },
 
   getPublicInstance(inst) {
@@ -78,10 +82,11 @@ const SongReconciler = reconciler({
 
   mutation: {
     appendChild(parentInstance, child) {
-      // noop
+      console.log('appendChild');
     },
 
     appendChildToContainer(parentInstance, child) {
+      console.log('appendChildToContainer');
       // if (child.render) {
       //   child.render(apeContextGlobal);
       // } else {
@@ -119,7 +124,7 @@ const defaultContainer = {};
 const roots = typeof WeakMap === 'function' ? new WeakMap() : new Map();
 
 const ReactSongRenderer = {
-  render(canvasElement, container, callback) {
+  render(element, container, callback) {
     const containerKey = container == null ? defaultContainer : container;
     let root = roots.get(containerKey);
     if (!root) {
@@ -127,10 +132,11 @@ const ReactSongRenderer = {
       roots.set(container, root);
     }
 
-    SongReconciler.updateContainer(canvasElement, root, null, callback);
+    SongReconciler.updateContainer(element, root, null, callback);
 
     SongReconciler.injectIntoDevTools({
       bundleType: 1, // 1 = development / 0 = production
+      version: '1.0.0',
       rendererPackageName: 'React Song',
       findHostInstanceByFiber: SongReconciler.findHostInstance,
     });
