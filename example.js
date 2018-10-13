@@ -63,13 +63,13 @@ window.onload = function(){
 
 
         // btnStart.addEventListener('click', function(e){
-            song.play();
+        song.play();
         // });
 
 
-        btnStop.addEventListener('click', function(e){
-            song.stop();
-        });
+        // btnStop.addEventListener('click', function(e){
+        //     song.stop();
+        // });
 
     });
 };

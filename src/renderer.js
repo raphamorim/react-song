@@ -11,11 +11,7 @@ import { createElement } from './component';
 
 const SongReconciler = reconciler({
   appendInitialChild(parentInstance, child) {
-    console.log('appendInitialChild');
-    // if (parentInstance.appendChild) {
-    //   parentInstance.appendChild(child);
-    //   parentInstance.render(apeContextGlobal);
-    // }
+    parentInstance.addSequence(child);
   },
 
   createInstance(
@@ -42,7 +38,9 @@ const SongReconciler = reconciler({
 
   finalizeInitialChildren(element, type, props) {
     if (type === 'Song') {
-      console.log(element.render());
+      window.sequencer.ready(() => {
+        element.render();
+      });
     }
   },
 

@@ -1,14 +1,37 @@
 # React Song
 
-```jsx
-import React, { render } from 'react';
-import { Song, Note, Track } from 'react-song';
+> React Song it's a "just for fun" project.
 
-<Song bpm={60} metronome={60}>
-  <Note number={30} velocity={100} duration={192}/>
-  <Note number={33} velocity={100} duration={192}/>
-  <Note number={33} velocity={100} duration={192}/>
-  <Note number={33} velocity={100} duration={192}/>
-  <Note number={34} velocity={100} duration={192}/>
-</Song>
+### Random Robot Song
+
+```jsx
+import React from 'react';
+import { Song, Note, Track, render } from './src/index';
+
+const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+
+let notes = [];
+for (let i = 0; i <= 10000; i += 200) {
+  notes.push(
+    <Note
+      key={i}
+      ticks={i}
+      number={getRandomInt(120)}
+      duration={30}
+      velocity={60}
+    />
+  );
+}
+
+class Music extends React.Component {
+  render() {
+    return (
+      <Song bpm={100} metronome={100}>
+        { notes }
+      </Song>
+    );
+  }
+}
+
+render(<Music/>, document.querySelector('#root'));
 ```
