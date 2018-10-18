@@ -1,4 +1,4 @@
-import './heartbeat';
+import '../heartbeat/index.js';
 
 class Song {
   constructor(props) {
@@ -6,6 +6,7 @@ class Song {
     this.config = {
       metronome: props.metronome || true,
       bpm: props.bpm || 60,
+      bars: props.bars || 4,
     }
   }
 
@@ -15,7 +16,7 @@ class Song {
 
   render() {
     let { notes, config } = this;
-    const { metronome, bpm } = config;
+    const { metronome, bpm, bars } = config;
 
     // const controlChange = window.sequencer.createMidiEvent(0, sequencer.CONTROL_CHANGE, 10, 0);
     // notes = notes.unshift(controlChange);
@@ -23,21 +24,20 @@ class Song {
     console.log(notes);
 
     const song = window.sequencer.createSong({
+      bars: bars,
       bpm: bpm,
       events: notes,
       useMetronome: metronome
     });
 
-    console.log('song rendered');
+    window.reactSong = song;
 
-    song.play();
+    // song.play();
   }
 }
 
 function createSequence(props) {
   const { ticks, number, duration, velocity, panning } = props;
-
-  console.log('on', ticks);
 
   const note = sequencer.createMidiEvent(
     ticks,
@@ -45,8 +45,6 @@ function createSequence(props) {
     number || 0,
     velocity || 0
   );
-
-  console.log('on', ticks + duration);
 
   const noteOff = sequencer.createMidiEvent(
     ticks + duration,

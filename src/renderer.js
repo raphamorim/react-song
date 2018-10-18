@@ -11,6 +11,7 @@ import { createElement } from './component';
 
 const SongReconciler = reconciler({
   appendInitialChild(parentInstance, child) {
+    console.log('createInstance');
     parentInstance.addSequence(child);
   },
 
@@ -21,7 +22,6 @@ const SongReconciler = reconciler({
     hostContext,
     internalInstanceHandle
   ) {
-
     const element = createElement(
       type,
       props,

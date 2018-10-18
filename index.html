@@ -3,16 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>React Song Example</title>
+  <link rel="stylesheet" href="resources/style.css"/>
 </head>
 <body>
-  <!-- <button id="start">start</button>
-  <button id="stop">stop</button> -->
+  <div id='editor'>
+      <div id='score'>
+          <div id='pitch-lines'></div>
+          <div id='bar-lines'></div>
+          <div id='beat-lines'></div>
+          <div id='sixteenth-lines'></div>
+          <div id='notes'></div>
+          <div id='parts'></div>
+          <div id='playhead'>
+              <div id='playhead-line'></div>
+          </div>
+      </div>
+  </div>
+  <div id='controls'>
+      <input type='button' id='play' value='play' />
+      <input type='button' id='stop' value='stop' />
+
+      <div id='time-bars-beats'></div>
+
+      <div class='pipe'>|</div>
+      <div id='time-seconds'></div>
+  </div>
 
   <div id="root"></div>
 
-  <!-- <script src="./src/heartbeat.js"></script>
-  <script src="./example.js"></script> -->
-
   <script src="bundle.js"></script>
+  <script src="src/main.js"></script>
 </body>
 </html>
