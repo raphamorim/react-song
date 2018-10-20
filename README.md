@@ -31,8 +31,6 @@ for (let i = 0; i <= 10000; i += 200) {
   );
 }
 
-### [Yu Yu Hakusho](http://raphamorim.io/react-song/?s=yuyuhakusho)
-
 class Music extends React.Component {
   render() {
     return (
@@ -46,7 +44,7 @@ class Music extends React.Component {
 render(<Music/>, document.querySelector('#root'));
 ```
 
-### 
+### [Yu Yu Hakusho](http://raphamorim.io/react-song/?s=yuyuhakusho)
 
 ```jsx
 import React from 'react';
