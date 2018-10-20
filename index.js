@@ -8,15 +8,17 @@ import YuYuHakushoSong from './examples/yu-yu-hakusho-song';
 import './examples/utils/visualizer';
 
 let App;
+let urlParams = new URLSearchParams(window.location.search);
+let experiment = urlParams.get('s');
 
-switch (window.location.pathname) {
-  case '/yyh':
+switch (experiment) {
+  case 'yuyuhakusho':
     App = YuYuHakushoSong;
     break;
-  case '/bhc':
+  case 'beverlyhillscop':
     App = BeverlyHillsCopSong;
     break;
-  case '/bsb':
+  case 'backstreetboys':
     App = IWantThatWaySong;
     break;
   default:
