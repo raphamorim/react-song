@@ -1,6 +1,6 @@
 {
   "name": "react-song",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Renderer for songs",
   "main": "index.js",
   "keywords": [],
