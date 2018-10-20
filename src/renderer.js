@@ -11,8 +11,14 @@ import { createElement } from './component';
 
 const SongReconciler = reconciler({
   appendInitialChild(parentInstance, child) {
-    console.log('createInstance');
-    parentInstance.addSequence(child);
+    const { type } = child;
+    if (type === 'notes') {
+      parentInstance.addSequence(child.notes);
+    }
+
+    if (type === 'midi') {
+      parentInstance.setMIDI(child.midi);
+    }
   },
 
   createInstance(
@@ -80,24 +86,19 @@ const SongReconciler = reconciler({
 
   mutation: {
     appendChild(parentInstance, child) {
-      console.log('appendChild');
+      // noop
     },
 
     appendChildToContainer(parentInstance, child) {
-      console.log('appendChildToContainer');
-      // if (child.render) {
-      //   child.render(apeContextGlobal);
-      // } else {
-      //   child(apeContextGlobal);
-      // }
+      // noop
     },
 
     removeChild(parentInstance, child) {
-      // parentInstance.removeChild(child);
+      // noop
     },
 
     removeChildFromContainer(parentInstance, child) {
-      // parentInstance.removeChild(child);
+      // noop
     },
 
     insertBefore(parentInstance, child, beforeChild) {},

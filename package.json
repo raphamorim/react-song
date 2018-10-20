@@ -1,7 +1,7 @@
 {
   "name": "react-song",
   "version": "1.0.0",
-  "description": "",
+  "description": "React Renderer for songs",
   "main": "index.js",
   "keywords": [],
   "author": "Raphael Amorim <rapha850@gmail.com>",

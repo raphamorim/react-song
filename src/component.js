@@ -3,6 +3,7 @@ import '../heartbeat/index.js';
 class Song {
   constructor(props) {
     this.notes = [];
+    this.midi = null;
     this.config = {
       metronome: props.metronome || true,
       bpm: props.bpm || 60,
@@ -10,18 +11,34 @@ class Song {
     }
   }
 
+  setMIDI(midi) {
+    this.midi = midi;
+  }
+
   addSequence(sequence) {
     this.notes = this.notes.concat(sequence);
   }
 
   render() {
-    let { notes, config } = this;
+    let { notes, midi, config } = this;
     const { metronome, bpm, bars } = config;
 
-    // const controlChange = window.sequencer.createMidiEvent(0, sequencer.CONTROL_CHANGE, 10, 0);
-    // notes = notes.unshift(controlChange);
-
-    console.log(notes);
+    if (midi) {
+      return midi().then(
+        function onFulfilled(midifile){
+          const song = window.sequencer.createSong(midifile);
+          const event = new CustomEvent('songCreated', {
+            bubbles: true,
+            detail: song
+          });
+          window.document.body.dispatchEvent(event);
+          song.play();
+        },
+        function onRejected(e){
+          console.warn(e);
+        }
+      );
+    }
 
     const song = window.sequencer.createSong({
       bars: bars,
@@ -29,10 +46,13 @@ class Song {
       events: notes,
       useMetronome: metronome
     });
-
     window.reactSong = song;
-
-    // song.play();
+    const event = new CustomEvent('songCreated', {
+      bubbles: true,
+      detail: song
+    });
+    window.document.body.dispatchEvent(event);
+    song.play();
   }
 }
 
@@ -53,13 +73,22 @@ function createSequence(props) {
     0
   );
 
-  return [note, noteOff];
+  return { type: 'notes', notes: [note, noteOff] };
+}
+
+function createMidi(props) {
+  const { base64 } = props;
+  const { createMidiFile } = window.sequencer;
+  if (base64) {
+    return { type: 'midi', midi: createMidiFile.bind(this, { base64 }) };
+  }
 }
 
 export function createElement(type, props) {
   const COMPONENTS = {
     Song: () => new Song(props),
-    Note: () => createSequence(props)
+    Note: () => createSequence(props),
+    Midi: () => createMidi(props)
   };
 
   return COMPONENTS[type]

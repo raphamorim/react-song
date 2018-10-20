@@ -1,5 +1,5 @@
 import React from 'react';
-import { Song, Note, Track, render } from './src/index';
+import { Song, Note } from '../src/index';
 
 const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
 
@@ -26,4 +26,4 @@ class Music extends React.Component {
   }
 }
 
-render(<Music/>, document.querySelector('#root'));
+export default Music;

@@ -1,29 +1,26 @@
 import React from 'react';
-import { Song, Note, Track, render } from './src/index';
+import { render } from './src/index';
+import RandomRobotSong from './examples/random-robot-song';
+import BeverlyHillsCopSong from './examples/beverly-hills-cop-song';
+import IWantThatWaySong from './examples/i-want-that-way-song';
+import YuYuHakushoSong from './examples/yu-yu-hakusho-song';
 
-const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max));
+import './examples/utils/visualizer';
 
-let notes = [];
-for (let i = 0; i <= 10000; i += 200) {
-  notes.push(
-    <Note
-      key={i}
-      ticks={i}
-      number={getRandomInt(120)}
-      duration={30}
-      velocity={60}
-    />
-  );
+let App;
+
+switch (window.location.pathname) {
+  case '/yyh':
+    App = YuYuHakushoSong;
+    break;
+  case '/bhc':
+    App = BeverlyHillsCopSong;
+    break;
+  case '/bsb':
+    App = IWantThatWaySong;
+    break;
+  default:
+    App = RandomRobotSong;
 }
 
-class Music extends React.Component {
-  render() {
-    return (
-      <Song bpm={100} metronome={100}>
-        { notes }
-      </Song>
-    );
-  }
-}
-
-render(<Music/>, document.querySelector('#root'));
+render(<App/>, document.querySelector('#root'));

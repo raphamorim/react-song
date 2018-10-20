@@ -4640,12 +4640,12 @@
             //console.log('string', arg, config, storage.instruments);
         }
 
-        if(config === false || config.className !== 'InstrumentConfig'){
-            if(debug >= 2){
-                console.info('can not create instrument from', arg);
-            }
-            return false;
-        }
+        // if(config === false || config.className !== 'InstrumentConfig'){
+        //     if(debug >= 2){
+        //         console.info('can not create instrument from', arg);
+        //     }
+        //     return false;
+        // }
 
 
         if(config.name === 'sinewave'){
