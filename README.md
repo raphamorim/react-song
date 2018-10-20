@@ -1,10 +1,16 @@
 # React Song
 
-> React Song it's a "just for fun" project.
+> React Song is a renderer to render MIDI, ArrayBuffer and Base64 as Sound.
 
-React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat) but I want to replace it soon. 
+React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat) but it will be replaced soon. 
 
-### Random Robot Song
+**Do not use it production, it's just for fun.**
+
+There's a LOT of things to work and fix. So ISN'T READY FOR USE.
+
+![Example](resources/example.png)
+
+### [Random Robot Song](http://raphamorim.io/react-song)
 
 ```jsx
 import React from 'react';
@@ -24,6 +30,8 @@ for (let i = 0; i <= 10000; i += 200) {
     />
   );
 }
+
+### [Yu Yu Hakusho](http://raphamorim.io/react-song/?s=yuyuhakusho)
 
 class Music extends React.Component {
   render() {
@@ -58,3 +66,5 @@ class YuYuHakushoSong extends React.Component {
 
 export default YuYuHakushoSong;
 ```
+
+##### Created by [Raphael Amorim](https://github.com/raphamorim)
