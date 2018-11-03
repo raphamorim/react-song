@@ -6,6 +6,8 @@ React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat) but i
 
 **Do not use it production, it's just for fun.**
 
+**Stable version isn't published yet :)**
+
 There's a LOT of things to work and fix. So ISN'T READY FOR USE.
 
 ![Example](resources/example.png)

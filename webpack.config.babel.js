@@ -7,8 +7,8 @@ const sourcePath = path.join(__dirname, 'src');
 const config = {
   entry: ['./index.js', sourcePath],
   output: {
-     path: __dirname,
-     filename: 'bundle.js'
+    path: __dirname,
+    filename: 'bundle.js'
   },
   resolve: {
     extensions: ['.js', '.jsx'],

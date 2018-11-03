@@ -12,10 +12,10 @@
     "start": "webpack-dev-server --progress --colors"
   },
   "peerDependencies": {
-    "react": "^16.5.2"
+    "react": "^16.6.0"
   },
   "devDependencies": {
-    "react": "^16.5.2",
+    "react": "^16.6.0",
     "react-reconciler": "^0.15.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
