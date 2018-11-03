@@ -21,8 +21,10 @@ switch (experiment) {
   case 'backstreetboys':
     App = IWantThatWaySong;
     break;
-  default:
+  case 'robot':
     App = RandomRobotSong;
+  default:
+    App = IWantThatWaySong;
 }
 
 render(<App/>, document.querySelector('#root'));

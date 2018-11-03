@@ -7,7 +7,7 @@
   "author": "Raphael Amorim <rapha850@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -p",
     "build-prod": "NODE_ENV=production webpack",
     "start": "webpack-dev-server --progress --colors"
   },
