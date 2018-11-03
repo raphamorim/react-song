@@ -112,7 +112,6 @@ class Part {
       eventsById = this.eventsById,
       copies = [],
       copy, id, event;
-    //console.log('Part.copy', events);
 
     part.song = undefined;
     part.track = undefined;
@@ -122,7 +121,6 @@ class Part {
       if (eventsById.hasOwnProperty(id)) {
         event = eventsById[id];
         copy = event.copy();
-        //console.log(copy.ticks, partTicks);
         copy.ticks = copy.ticks - partTicks;
         copies.push(copy);
       }
@@ -137,12 +135,10 @@ class Part {
     }
     this.mute = false;
     this.solo = flag;
-    // stop all sounds here
     this.allNotesOff();
     if (this.track) {
       this.track.setPartSolo(this, flag);
     }
-    //console.log(this.solo, this.mute);
   };
 
 
@@ -153,8 +149,6 @@ class Part {
     this.track.instrument.allNotesOffPart(this.id);
   };
 
-
-  // called by Track if a part gets removed from a track
   reset(fromTrack, fromSong) {
     var eventsById = this.eventsById,
       id, event;
@@ -174,7 +168,6 @@ class Part {
         event = eventsById[id];
         event.ticks -= this.ticks;
         event.reset(false, fromTrack, fromSong);
-        //event.state = 'removed';
       }
     }
     this.ticks = 0;
@@ -183,8 +176,6 @@ class Part {
 
 
   update() {
-    //console.log('part update');
-
     var i, maxi, j, maxj, id, event, noteNumber, note, onEvents, onEvent,
       firstEvent, lastEvent, stats,
       noteOnEvents = [],
@@ -195,20 +186,12 @@ class Part {
       track = this.track,
       trackId = this.track ? this.track.id : undefined;
 
-    // if(!trackId){
-    //     console.log(this, 'does not belong to a track anymore');
-    // }
-
-    //console.log('Part.update()', this.state, this.eventsById);
-
     this.events = [];
 
     for (id in this.eventsById) {
       if (this.eventsById.hasOwnProperty(id)) {
         event = this.eventsById[id];
-        //console.log(event);
         if (event.state !== 'clean') {
-          //console.log(event.state);
           this.dirtyEvents[event.id] = event;
         }
 
@@ -225,7 +208,6 @@ class Part {
 
     for (i = 0, maxi = this.notes.length; i < maxi; i++) {
       note = this.notes[i];
-      //console.log(note.noteOn.state);
       if (note.noteOn.state === 'removed' || (note.noteOff !== undefined && note.noteOff.state === 'removed')) {
         note.state = 'removed';
         this.dirtyNotes[note.id] = note;
@@ -236,24 +218,12 @@ class Part {
       }
     }
 
-    //console.log('part', this.events.length);
-
     for (i = 0, maxi = this.events.length; i < maxi; i++) {
       event = this.events[i];
       noteNumber = event.noteNumber;
 
       if (event.type === sequencer.NOTE_ON) {
         if (event.midiNote === undefined) {
-
-          /*
-          if(noteOnEvents[noteNumber] === undefined){
-              noteOnEvents[noteNumber] = [];
-          }
-          noteOnEvents[noteNumber].push(event);
-          */
-
-
-          //console.log(i, 'NOTE_ON', event.eventNumber, noteNumber, noteOnEvents[noteNumber]);
           note = createMidiNote(event);
           note.part = part;
           note.partId = partId;
@@ -266,43 +236,24 @@ class Part {
             notes[noteNumber] = [];
           }
           notes[noteNumber].push(note);
-          //console.log('create note:', note.id, 'for:', noteNumber, 'ticks:', event.ticks);
         }
       } else if (event.type === sequencer.NOTE_OFF) {
-        //console.log(event.midiNote);
         if (event.midiNote === undefined) {
           if (notes[noteNumber] === undefined) {
-            //console.log('no note!', noteNumber);
             continue;
           }
 
           var l = notes[noteNumber].length - 1;
           note = notes[noteNumber][l];
           if (note.noteOff !== undefined && note.durationTicks > 0) {
-            //console.log('has already a note off event!', noteNumber, note.durationTicks, note.noteOff.ticks, event.ticks);
             continue;
           }
-          /*
-                              // get the lastly added note
-                              var l = notes[noteNumber].length - 1;
-                              var t = 0;
-                              note = null;
 
-                              while(t <= l){
-                                  note = notes[noteNumber][t];
-                                  if(note.noteOff === undefined){
-                                      break;
-                                  }
-                                  t++
-                              }
-          */
           if (note === null) {
             continue;
           }
 
-          //console.log('add note off to note:', note.id, 'for:', noteNumber, 'ticks:', event.ticks, 'num note on:', l, 'index:', t);
           if (note.noteOn === undefined) {
-            //console.log('no NOTE ON');
             continue;
           }
           if (note.state !== 'new') {
@@ -310,56 +261,13 @@ class Part {
           }
           this.dirtyNotes[note.id] = note;
           note.addNoteOff(event);
-
-
-          /*
-          onEvents = noteOnEvents[noteNumber];
-          if(onEvents){
-              onEvent = onEvents.shift();
-              //console.log(note.midiNote);
-              if(onEvent && onEvent.midiNote){
-                  note = onEvent.midiNote;
-                  if(note.state !== 'new'){
-                      note.state = 'changed';
-                  }
-                  this.dirtyNotes[note.id] = note;
-                  if(event.ticks - note.noteOn.ticks === 0){
-                      console.log(note.noteOn.ticks, event.ticks);
-                      note.adjusted = true;
-                      //event.ticks += 120;
-                  }
-                  note.addNoteOff(event);
-                  //console.log(i, 'NOTE_OFF', event.midiNote);
-              }
-          }else{
-              maxj = this.notes.length;
-              for(j = maxj - 1; j >= 0; j--){
-                  note = this.notes[j];
-                  if(note.number === event.noteNumber){
-                      note.state = 'changed';
-                      note.addNoteOff(event);
-                      this.dirtyNotes[note.id] = note;
-                      //console.log(note.id);
-                      break;
-                  }
-              }
-          }
-          */
-
         } else if (this.notesById[event.midiNote.id] === undefined) {
-          //console.log('not here');
-          // note is recorded and has already a duration
           note = event.midiNote;
-          //console.log('recorded notes', note.id);
-          //note.state = 'new';
           note.part = part;
           note.partId = partId;
           note.track = track;
           note.trackId = trackId;
-          //this.dirtyNotes[note.id] = note;
           this.notesById[note.id] = note;
-        } else {
-          //console.log('certainly not here');
         }
       }
     }
@@ -380,12 +288,8 @@ class Part {
     this.numEvents = this.events.length;
     this.numNotes = this.notes.length;
 
-    //console.log(this.numEvents, this.numNotes);
-
     firstEvent = this.events[0];
     lastEvent = this.events[this.numEvents - 1];
-
-    //console.log(firstEvent.ticks, lastEvent.ticks);
 
     if (firstEvent) {
       if (firstEvent.ticks < this.ticks) {
@@ -405,9 +309,8 @@ class Part {
           break;
       }
     } else {
-      // fixing issue #6
       this.start.ticks = this.ticks;
-      this.end.ticks = this.ticks + 100; // give the part a minimal duration of 100 ticks
+      this.end.ticks = this.ticks + 100;
       this.duration.ticks = 100;
     }
 
@@ -418,8 +321,6 @@ class Part {
     this.ticks = this.start.ticks;
 
     if (this.state === 'clean') {
-      //@TODO: check if this is the preferred way of doing it after all, add: part.track.needsUpdate = true;
-      //console.log('part sets its own status in update() -> this shouldn\'t happen');
       this.state = 'changed';
     }
 
