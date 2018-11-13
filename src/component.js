@@ -1,13 +1,21 @@
+/**
+ * Copyright (c) 2018-present, Raphael Amorim.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
 import '../heartbeat/index.js';
-// import MaestroModule from './maestro';
+import MaestroModule from './maestro';
 
 let Maestro, createMidiFile;
 
 Maestro = window.sequencer;
-createMidiFile = window.sequencer.createMidiFile;
+// createMidiFile = window.sequencer.createMidiFile;
 
 // Maestro = MaestroModule;
-// createMidiFile = MaestroModule.createMidi;
+createMidiFile = MaestroModule.createMidi;
 
 class Song {
   constructor(props) {

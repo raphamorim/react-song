@@ -1,7 +1,17 @@
 import base64ToBinary from './utils/base64ToBinary';
 import parseMidiFile from './utils/parseMidiFile';
+import Part from './types/Part';
+import Track from './types/Track';
 
 const defaultPPQ = 960;
+
+function createPart(){
+  return new Part();
+}
+
+function createTrack(name, type, song) {
+  return new Track(name, type, song);
+}
 
 function parse(midifile, buffer, resolve) {
   let data, i, j, numEvents, part, track, numTracks,

@@ -76,11 +76,11 @@ export default function createStream(buffer) {
   }
 
   return {
-    'eof': eof,
-    'read': read,
-    'readInt32': readInt32,
-    'readInt16': readInt16,
-    'readInt8': readInt8,
-    'readVarInt': readVarInt
+    eof,
+    read,
+    readInt32,
+    readInt16,
+    readInt8,
+    readVarInt
   };
 }
