@@ -5,10 +5,11 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const sourcePath = path.join(__dirname, 'src');
 
 const config = {
-  entry: ['./index.js', sourcePath],
+  target: 'web',
+  entry: sourcePath,
   output: {
     path: __dirname,
-    filename: 'bundle.js'
+    filename: 'react-song.min.js'
   },
   resolve: {
     extensions: ['.js', '.jsx'],

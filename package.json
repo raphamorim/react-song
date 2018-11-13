@@ -1,7 +1,7 @@
 {
   "name": "react-song",
-  "version": "1.0.1",
-  "description": "React Renderer for songs",
+  "version": "1.0.3",
+  "description": "React Song is a renderer to render MIDI, ArrayBuffer and Base64 as Sound",
   "main": "index.js",
   "keywords": [],
   "author": "Raphael Amorim <rapha850@gmail.com>",
@@ -15,14 +15,15 @@
     "react": "^16.6.0"
   },
   "devDependencies": {
-    "react": "^16.6.0",
-    "react-reconciler": "^0.15.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "react": "^16.6.0",
+    "react-reconciler": "^0.15.0",
     "uglifyjs-webpack-plugin": "^1.0.1",
-    "webpack": "^3.8.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^2.9.4"
   }
 }

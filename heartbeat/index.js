@@ -12897,7 +12897,7 @@
 
                 if(note.noteOff === undefined){
                     if(sequencer.debug){
-                        console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
+                        // console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
                     }
                     continue;
                 }
@@ -12923,7 +12923,7 @@
 
                 if(note.noteOff === undefined){
                     if(sequencer.debug){
-                        console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
+                        // console.warn('note with id', note.id, 'has no noteOff event', note.noteOn.track.name);
                     }
                     continue;
                 }

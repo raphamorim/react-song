@@ -7,15 +7,9 @@
  */
 
 import '../heartbeat/index.js';
-import MaestroModule from './maestro';
 
-let Maestro, createMidiFile;
-
-Maestro = window.sequencer;
-// createMidiFile = window.sequencer.createMidiFile;
-
-// Maestro = MaestroModule;
-createMidiFile = MaestroModule.createMidi;
+// Hacky: Heartbeat runs code after document.ready
+const sequencer = window.sequencer;
 
 class Song {
   constructor(props) {
@@ -43,7 +37,7 @@ class Song {
     if (midi) {
       return midi().then(
         function onFulfilled(midifile){
-          const song = Maestro.createSong(midifile);
+          const song = sequencer.createSong(midifile);
           const event = new CustomEvent('songCreated', {
             bubbles: true,
             detail: song
@@ -57,7 +51,7 @@ class Song {
       );
     }
 
-    const song = Maestro.createSong({
+    const song = sequencer.createSong({
       bars: bars,
       bpm: bpm,
       events: notes,
@@ -76,14 +70,14 @@ class Song {
 function createSequence(props) {
   const { ticks, number, duration, velocity, panning } = props;
 
-  const note = Maestro.createMidiEvent(
+  const note = sequencer.createMidiEvent(
     ticks,
     SongModule.NOTE_ON,
     number || 0,
     velocity || 0
   );
 
-  const noteOff = Maestro.createMidiEvent(
+  const noteOff = sequencer.createMidiEvent(
     ticks + duration,
     SongModule.NOTE_OFF,
     number || 0,
@@ -96,7 +90,7 @@ function createSequence(props) {
 function createMidi(props) {
   const { base64 } = props;
   if (base64) {
-    const midi = createMidiFile.bind(this, { base64 });
+    const midi = sequencer.createMidiFile.bind(this, { base64 });
     return { type: 'midi', midi };
   }
 }

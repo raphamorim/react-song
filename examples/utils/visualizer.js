@@ -66,7 +66,6 @@ document.body.addEventListener('songCreated', (e) => {
       updateElement(allNoteDivs[note.id], note.bbox, 0);
     });
 
-
     // stateChanged arrays contain elements that have become active or inactive
     snapshot.notes.stateChanged.forEach(function(note) {
       divNote = document.getElementById(note.id);
@@ -78,7 +77,6 @@ document.body.addEventListener('songCreated', (e) => {
         }
       }
     });
-
 
     if (snapshot.hasNewBars) {
       // set the new width of the score

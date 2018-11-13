@@ -2,13 +2,11 @@
 
 > React Song is a renderer to render MIDI, ArrayBuffer and Base64 as Sound.
 
-React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat) but it will be replaced soon. 
+React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat). 
 
-**Do not use it production, it's just for fun.**
+1 - **Do not use it production, it's just for fun project.**
 
-**Stable version isn't published yet :)**
-
-There's a LOT of things to work and fix. So ISN'T READY FOR USE.
+2 - I do not have the intention to maintain this project. It's just a demo project that I used in React Berlin and React Conf Brazil respective talks.
 
 ![Example](resources/example.png)
 
