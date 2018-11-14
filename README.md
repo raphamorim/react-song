@@ -8,6 +8,8 @@ React Song is powered by [heartbeat](https://github.com/abudaan/heartbeat).
 
 2 - I do not have the intention to maintain this project. It's just a demo project that I used in React Berlin and React Conf Brazil respective talks.
 
+3 - No stable version was published to NPM :P
+
 ![Example](resources/example.png)
 
 ### [Random Robot Song](http://raphamorim.io/react-song)

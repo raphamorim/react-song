@@ -1,5 +1,4 @@
 import React from 'react';
-// import render from './dist/react-song.min.js';
 import { render } from './src';
 import RandomRobotSong from './examples/random-robot-song';
 import BeverlyHillsCopSong from './examples/beverly-hills-cop-song';
